@@ -1,0 +1,20 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#interior {
+	width: 1600px;
+	height: 600px;
+	border: 2px solid #000;
+	position: absolute;
+}
+
+#queue {
+	width: 500px;
+	height: 100px;
+	background: rgba(0,231,0,0.2);
+	position: absolute;
+	bottom: 200px;
+	right: 25px;
+}
