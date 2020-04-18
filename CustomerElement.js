@@ -1,23 +1,36 @@
 import {EntityElement} from "./hgl/elements.js"
 import {Rect, Point} from "./hgl/geometry.js"
+import {CustomerState} from "./Constants.js"
 
 export class CustomerElement extends EntityElement {
 	constructor(data) {
 		super();
 		this.data = data;
-		this.patienceDuration = 5000;
+		this.patienceDuration = 10000;
 		this.patienceTimeout = null;
-
-		this.title = this.data.title;
+		this.state = CustomerState.IDLE;
+		if (this.data.title) {
+			this.title = this.data.title;
+		}
 		this.addEventListener("click", fn => {
 			this.parentElement.parentElement.querySelector("#queue-leave").appendChild(this);
 		})
 	}
 
+	set state(state) {
+		console.log("setting state", state);
+		this._state = state;
+		this.dataset.state = state;
+	}
+
+	get state() {
+		return this._state;
+	}
+
 	tick(game) {
 		// Enter or leave, queuing behind the previous customer
-		const walkSpeed = 0.3;
-		let walkDistance = 15;
+		const walkSpeed = 0.8;
+		let walkDistance = 25;
 		const distanceBetweenCustomers = 10;
 		const walkDelta = walkDistance * walkSpeed
 		const customerIsLeaving = this.parentElement.id == "queue-leave";

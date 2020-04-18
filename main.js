@@ -4,7 +4,7 @@ import {Point, Rect, Size} from "./hgl/geometry.js"
 
 import {BusinessModel} from "./BusinessModel.js"
 import {CoffeeHouseController} from "./CoffeeHouseController.js"
-import {ProductionModel} from "./ProductionModel.js"
+import {ProductionModel} from "./ProductionModel.js";
 
 class Game {
 
@@ -91,6 +91,9 @@ class Game {
 	}
 
 	onPKeyUp(evt) {
+		if (this.coffeeHouseController.queueLength < 1) {
+			return;
+		}
 		this.coffeeHouseController.addProduct();
 	}
 

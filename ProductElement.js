@@ -9,6 +9,15 @@ export class ProductElement extends EntityElement {
 		this.title = this.data.title;
 	}
 
+	set type(type) {
+		this._type = type;
+		this.dataset.type = type;
+	}
+
+	get type() {
+		return this._type;
+	}
+
 	tick(game) {
 		// Enter or leave, queuing behind the previous customer
 		const walkSpeed = 0.8;

@@ -1,6 +1,9 @@
 import {Rect} from "./hgl/geometry.js"
 import {CustomerElement} from "./CustomerElement.js"
 import {ProductElement} from "./ProductElement.js"
+import {CustomerState} from "./Constants.js"
+
+import {DialogController} from "./DialogController.js"
 
 export class CoffeeHouseController {
 
@@ -18,11 +21,13 @@ export class CoffeeHouseController {
 		window.addEventListener("productStoppedFirstInLine", this.onProductStoppedFirstInLine.bind(this));
 		window.addEventListener("customerLeft", this.onCustomerLeft.bind(this));
 
+		this.dialogController = new DialogController(this);
+
 		this.currentCustomerPatienceTimeout = null;
 	}
 
 	get queueLength() {
-		return this.queueLength.childElementCount;
+		return this.queueEnterElement.childElementCount;
 	}
 
 	get firstInLineProduct() {
@@ -59,24 +64,37 @@ export class CoffeeHouseController {
 		let customerElm = evt.detail;
 		let productElm = this.firstInLineProduct;
 		if (productElm) {
+			// If a product is waiting for the consumer
 			window.clearTimeout(customerElm.patienceTimeout);
+			this.dialogController.showDialog(customerElm.request);
+			this.dialogController.markAsCompleted()
+			customerElm.state = CustomerState.satisfied;
 			productElm.consume();
-			customerElm.classList.remove("waiting");
-			// main delegate cash exchange!
-			customerElm.startLeavingHappy();
+			window.setTimeout(e => {
+				customerElm.startLeavingHappy();
+				this.dialogController.hideDialog();
+			}, 1000);
+
 		} else {
-			console.log("started waiting:", customerElm.data.title, customerElm.patienceDuration);
-			customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
-			customerElm.classList.add("waiting");
+			// No product ready for the customer to consume
+			customerElm.state = CustomerState.idle;
+			window.setTimeout(e => {
+				customerElm.state = CustomerState.waiting;
+				this.dialogController.showDialog(customerElm.request, customerElm.patienceDuration);
+				customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
+			}, 1000);
 		}
 	}
 
 	onCustomerPatienceExpired(customerElm) {
 		window.clearTimeout(customerElm.patienceTimeout);
-		console.log("patience expired", customerElm.data.title);
-		customerElm.classList.remove("waiting");
 		// main delegate cash exchange!
-		customerElm.startLeavingAngry();
+		customerElm.state = CustomerState.dissatisfied;
+		this.dialogController.markAsFailed()
+		window.setTimeout(e => {
+			this.dialogController.hideDialog();
+			customerElm.startLeavingAngry();
+		}, 1000)
 	}
 
 	onCustomerLeft(evt) {
@@ -87,12 +105,22 @@ export class CoffeeHouseController {
 	onProductStoppedFirstInLine(evt) {
 		let productElm = evt.detail;
 		let customerElm = this.firstInLineCustomer;
+		console.log("product arrived", productElm, customerElm, customerElm.state);
 		if (customerElm) {
-			customerElm.classList.remove("waiting");
+			if (customerElm.state != CustomerState.waiting) {
+				return;
+			}
+			console.log("satisfied", customerElm);
+			customerElm.state = CustomerState.satisfied;
+			window.clearTimeout(customerElm.patienceTimeout);
+			this.dialogController.markAsCompleted();
 			productElm.consume();
-			customerElm.startLeavingHappy();
+			window.setTimeout(e => {
+				customerElm.startLeavingHappy();
+				this.dialogController.hideDialog();
+			}, 2000);
 		} else {
-			console.log("A product but no customer!??")
+			console.error("A product but no customer!??");
 		}
 	}
 }
