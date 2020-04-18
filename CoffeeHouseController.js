@@ -30,7 +30,7 @@ export class CoffeeHouseController {
 	}
 
 	get firstInLineCustomer() {
-		return this.queueEnterElement.querySelector("x-customer:first-child:not(.moving)");
+		return this.queueEnterElement.querySelector("x-customer:first-child:not(.walking)");
 	}
 
 	addCustomer(data = {}) {
