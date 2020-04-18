@@ -14,9 +14,11 @@ export class CoffeeHouseController {
 		CustomerElement.register();
 		ProductElement.register();
 
-		this.addCustomer({title:"CC"});
-		this.addCustomer({title:"JM"});
-		this.addCustomer({title:"RR"});
+		window.addEventListener("customerStoppedFirstInLine", this.onCustomerStoppedFirstInLine.bind(this));
+		window.addEventListener("productStoppedFirstInLine", this.onProductStoppedFirstInLine.bind(this));
+		window.addEventListener("customerLeft", this.onCustomerLeft.bind(this));
+
+		this.currentCustomerPatienceTimeout = null;
 	}
 
 	get queueLength() {
@@ -49,5 +51,48 @@ export class CoffeeHouseController {
 		this.interiorElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
 		this.interiorElement.querySelectorAll("x-product").forEach(elm => elm.tick());
 		// Update UI in coffee house
+	}
+
+	// Delegation
+
+	onCustomerStoppedFirstInLine(evt) {
+		let customerElm = evt.detail;
+		let productElm = this.firstInLineProduct;
+		if (productElm) {
+			window.clearTimeout(customerElm.patienceTimeout);
+			productElm.consume();
+			customerElm.classList.remove("waiting");
+			// main delegate cash exchange!
+			customerElm.startLeavingHappy();
+		} else {
+			console.log("started waiting:", customerElm.data.title, customerElm.patienceDuration);
+			customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
+			customerElm.classList.add("waiting");
+		}
+	}
+
+	onCustomerPatienceExpired(customerElm) {
+		window.clearTimeout(customerElm.patienceTimeout);
+		console.log("patience expired", customerElm.data.title);
+		customerElm.classList.remove("waiting");
+		// main delegate cash exchange!
+		customerElm.startLeavingAngry();
+	}
+
+	onCustomerLeft(evt) {
+		console.log("removing", evt.detail);
+		evt.detail.remove();
+	}
+
+	onProductStoppedFirstInLine(evt) {
+		let productElm = evt.detail;
+		let customerElm = this.firstInLineCustomer;
+		if (customerElm) {
+			customerElm.classList.remove("waiting");
+			productElm.consume();
+			customerElm.startLeavingHappy();
+		} else {
+			console.log("A product but no customer!??")
+		}
 	}
 }

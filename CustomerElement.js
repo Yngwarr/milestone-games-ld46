@@ -5,8 +5,10 @@ export class CustomerElement extends EntityElement {
 	constructor(data) {
 		super();
 		this.data = data;
-		this.clicks = 0;
-		this.innerText = this.data.title;
+		this.patienceDuration = 5000;
+		this.patienceTimeout = null;
+
+		this.title = this.data.title;
 		this.addEventListener("click", fn => {
 			this.parentElement.parentElement.querySelector("#queue-leave").appendChild(this);
 		})
@@ -48,7 +50,7 @@ export class CustomerElement extends EntityElement {
 		if (x == targetX) {
 			if (this.classList.contains("walking")) {
 				this.classList.remove("walking");
-				if (!aheadCustomerElm) {
+				if (!customerIsLeaving && !aheadCustomerElm) {
 					window.dispatchEvent(new CustomEvent("customerStoppedFirstInLine", {detail:this}));
 				}
 			}
@@ -63,6 +65,16 @@ export class CustomerElement extends EntityElement {
 
 	startLeaving() {
 		this.closest("#interior").querySelector("#queue-leave").appendChild(this);
+	}
+
+	startLeavingHappy() {
+		this.startLeaving();
+		this.classList.add("happy");
+	}
+
+	startLeavingAngry() {
+		this.startLeaving();
+		this.classList.add("angry");
 	}
 
 	static selector() {

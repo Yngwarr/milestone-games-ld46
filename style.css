@@ -34,6 +34,10 @@ body {
 	overflow: hidden;
 }
 
+#queue-leave x-customer {
+	filter: brightness(80%);
+}
+
 x-customer {
 	display: block;
 	width: 40px;
@@ -43,9 +47,29 @@ x-customer {
 	text-align: center;
 }
 
+x-product::before {
+	display: block;
+	content: "☕️"
+} 
+
 x-customer.walking {
-	opacity: 0.5;
+
 }
+
+x-customer.waiting::before {
+	display: block;
+	content: "⏱"
+} 
+
+x-customer.happy::before {
+	display: block;
+	content: "😀"
+} 
+
+x-customer.angry::before {
+	display: block;
+	content: "😡"
+} 
 
 x-product {
 	width: 48px;

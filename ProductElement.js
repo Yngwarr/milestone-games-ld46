@@ -6,14 +6,12 @@ export class ProductElement extends EntityElement {
 		super();
 		this.data = data;
 		this.clicks = 0;
-		this.innerText = this.data.title;
-		this.addEventListener("click", fn => {
-		})
+		this.title = this.data.title;
 	}
 
 	tick(game) {
 		// Enter or leave, queuing behind the previous customer
-		const walkSpeed = 0.3;
+		const walkSpeed = 0.8;
 		let walkDistance = 15;
 		const distanceBetweenObjects = 10;
 		const walkDelta = walkDistance * walkSpeed;
