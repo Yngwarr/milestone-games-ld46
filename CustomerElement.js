@@ -8,33 +8,61 @@ export class CustomerElement extends EntityElement {
 		this.clicks = 0;
 		this.innerText = this.data.title;
 		this.addEventListener("click", fn => {
-			this.remove();
+			this.parentElement.parentElement.querySelector("#queue-leave").appendChild(this);
 		})
 	}
 
 	tick(game) {
-		// Queue behind the previous customer
-		const walkSpeed = 0.08;
-		const walkDistance = 15;
+		// Enter or leave, queuing behind the previous customer
+		const walkSpeed = 0.3;
+		let walkDistance = 15;
 		const distanceBetweenCustomers = 10;
 		const walkDelta = walkDistance * walkSpeed
+		const customerIsLeaving = this.parentElement.id == "queue-leave";
+
+		let targetX = 0;
+		if (customerIsLeaving) {
+			targetX = this.parentElement.getW();
+		}
+
 		let x = this.getX();
-		let walkToPoint = new Point(this.getX()-walkDistance,this.getY())
 		let aheadCustomerElm = this.previousSibling;
-		let minX = 0;
-		let distanceToNextObject = 0;
 		if (aheadCustomerElm) {
-			minX = aheadCustomerElm.getX()+aheadCustomerElm.getW()+distanceBetweenCustomers;
+			targetX = aheadCustomerElm.getX()+aheadCustomerElm.getW()+distanceBetweenCustomers;
 		}
 		
-		if (x > minX) {
-			x -= walkDelta;
-			this.classList.add("walking");
+		if (customerIsLeaving) {
+			if (x < targetX) {
+				x += walkDelta;
+				this.classList.add("walking");
+			} else if (x >= targetX) {
+				window.dispatchEvent(new CustomEvent("customerLeft", {detail:this}));
+			}
 		} else {
-			this.classList.remove("walking");
+			if (x > targetX) {
+				x -= walkDelta;
+				this.classList.add("walking");
+			} 
+		}
+		
+		if (x == targetX) {
+			if (this.classList.contains("walking")) {
+				this.classList.remove("walking");
+				if (!aheadCustomerElm) {
+					window.dispatchEvent(new CustomEvent("customerStoppedFirstInLine", {detail:this}));
+				}
+			}
 		}
 
 		this.setX(x);
+	}
+
+	leave() {
+		this.remove();
+	}
+
+	startLeaving() {
+		this.closest("#interior").querySelector("#queue-leave").appendChild(this);
 	}
 
 	static selector() {

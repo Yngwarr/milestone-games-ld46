@@ -3,8 +3,12 @@
 	padding: 0;
 }
 
+body {
+	font-family: sans-serif;
+}
+
 #interior {
-	width: 1600px;
+	width: 2400px;
 	height: 600px;
 	border: 2px solid #000;
 	position: absolute;
@@ -14,14 +18,20 @@
 #queue-leave {
 	width: 500px;
 	height: 200px;
-	background: rgba(230,255,230,1);
 	position: absolute;
 	bottom: 100px;
 	right: 25px;
+	overflow: hidden;
 }
 
-#queue-leave {
-	background: rgba(255,230,230,1);
+#product-belt {
+	width: 1800px;
+	height: 64px;
+	border-bottom: 1px solid #ccc;
+	position: absolute;
+	bottom: 160px;
+	left: 0;
+	overflow: hidden;
 }
 
 x-customer {
@@ -30,8 +40,18 @@ x-customer {
 	height: 180px;
 	background: rgb(244,23,213);
 	position: absolute;
+	text-align: center;
 }
 
 x-customer.walking {
 	opacity: 0.5;
+}
+
+x-product {
+	width: 48px;
+	height: 48px;
+	position: absolute;
+	background: #ccc;
+	display: block;
+	text-align: center;
 }

@@ -41,6 +41,10 @@ class Game {
 		window.setInterval(this.updateStatus.bind(this), 300);
 		window.focus();
 
+		window.addEventListener("customerStoppedFirstInLine", this.onCustomerStoppedFirstInLine.bind(this));
+		window.addEventListener("productStoppedFirstInLine", this.onProductStoppedFirstInLine.bind(this));
+		window.addEventListener("customerLeft", this.onCustomerLeft.bind(this));
+
 		this.businessModel = new BusinessModel(this);
 		this.productionModel = new ProductionModel(this);
 		this.coffeeHouseController = new CoffeeHouseController(this);
@@ -86,8 +90,12 @@ class Game {
 
 	}
 
-	onEnterKeyUp(evt) {
+	onCKeyUp(evt) {
 		this.coffeeHouseController.addCustomer();
+	}
+
+	onPKeyUp(evt) {
+		this.coffeeHouseController.addProduct();
 	}
 
 	onClick(evt) {
@@ -137,6 +145,8 @@ class Game {
 
 	}
 
+
+
 	translateClientPointToWorldPoint(point) {
 		let worldRect = this.gameElement.getRect();
 		let translatedPoint = point.clone();
@@ -150,10 +160,26 @@ class Game {
 	}
 
 	// element - game controller delegation
-	placeholderClickedThreeTimes(evt) {
-		let elm = evt.detail;
-		console.log("Placeholder clicked three times!", elm);
-		elm.remove();
+	onCustomerStoppedFirstInLine(evt) {
+		let customerElm = evt.detail;
+		let productElm = this.coffeeHouseController.firstInLineProduct;
+		if (productElm) {
+			productElm.consume();
+			customerElm.startLeaving();
+		}
+	}
+
+	onProductStoppedFirstInLine(evt) {
+		let productElm = evt.detail;
+		let customerElm = this.coffeeHouseController.firstInLineCustomer;
+		if (customerElm) {
+			productElm.consume();
+			customerElm.startLeaving();
+		}
+	}
+
+	onCustomerLeft(evt) {
+		evt.detail.remove();
 	}
 }
 
