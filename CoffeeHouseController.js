@@ -24,6 +24,12 @@ export class CoffeeHouseController {
 		this.dialogController = new DialogController(this);
 
 		this.currentCustomerPatienceTimeout = null;
+
+		window.setInterval(e => {
+			if (Math.random() > 0.7)  {
+				this.addCustomer();
+			}
+		}, 300)
 	}
 
 	get queueLength() {
