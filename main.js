@@ -4,7 +4,7 @@ import {Point, Rect, Size} from "./hgl/geometry.js"
 
 import {BusinessModel} from "./BusinessModel.js"
 import {CoffeeHouseController} from "./CoffeeHouseController.js"
-import {ProductionModel} from "./ProductionModel.js";
+import {ProductionController} from "./ProductionController.js";
 
 class Game {
 
@@ -42,10 +42,39 @@ class Game {
 		window.focus();
 
 		this.businessModel = new BusinessModel(this);
-		this.productionModel = new ProductionModel(this);
+		this.productionController = new ProductionController(this);
 		this.coffeeHouseController = new CoffeeHouseController(this);
 
 		//main is the commerce controller for now, spawning waves and stuff
+
+		this.setupWindowScroll();
+	}
+
+	setupWindowScroll() {
+		let mouseDown = false;
+		let mouseDownX;
+		let currentX;
+
+		window.addEventListener("mousedown", e => {
+			mouseDown = true;
+			document.body.classList.add("active");
+			mouseDownX = e.pageX - 0;
+			currentX = window.scrollX;
+		});
+		window.addEventListener("mouseleave", () => {
+			mouseDown = false;
+			document.body.classList.remove("active");
+		});
+		window.addEventListener("mouseup", () => {
+			mouseDown = false;
+			document.body.classList.remove("active");
+		});
+		window.addEventListener("mousemove", e => {
+			if (!mouseDown) return;
+			e.preventDefault();
+			const walk = e.pageX - mouseDownX;
+			window.scrollBy({left:-walk*8, behavior:"smooth"});
+		});
 	}
 
 	tick(timestamp) {
@@ -90,13 +119,6 @@ class Game {
 		this.coffeeHouseController.addCustomer();
 	}
 
-	onPKeyUp(evt) {
-		if (this.coffeeHouseController.queueLength < 1) {
-			return;
-		}
-		this.coffeeHouseController.addProduct();
-	}
-
 	onClick(evt) {
 		let elm = evt.target;
 		let point = new Point(evt.x, evt.y);
@@ -126,7 +148,7 @@ class Game {
 
 		this.coffeeHouseController.tick();
 		this.businessModel.tick();
-		this.productionModel.tick();
+		this.productionController.tick();
 
 		this.updateRequired = false;
 	}
@@ -143,8 +165,6 @@ class Game {
 	logOutput(message, ms = 3000) {
 
 	}
-
-
 
 	translateClientPointToWorldPoint(point) {
 		let worldRect = this.gameElement.getRect();

@@ -6,7 +6,6 @@ export class ProductElement extends EntityElement {
 		super();
 		this.data = data;
 		this.clicks = 0;
-		this.title = this.data.title;
 	}
 
 	set type(type) {
@@ -20,7 +19,7 @@ export class ProductElement extends EntityElement {
 
 	tick(game) {
 		// Enter or leave, queuing behind the previous customer
-		const walkSpeed = 0.8;
+		const walkSpeed = 0.3;
 		let walkDistance = 15;
 		const distanceBetweenObjects = 10;
 		const walkDelta = walkDistance * walkSpeed;

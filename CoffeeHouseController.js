@@ -45,8 +45,8 @@ export class CoffeeHouseController {
 		elm.setY(this.queueEnterElement.getH() - elm.getH());
 	}
 
-	addProduct() {
-		let elm = new ProductElement({title:"Coffee"});
+	addProduct(productId) {
+		let elm = new ProductElement(productId);
 		this.productBeltElement.appendChild(elm);
 		elm.setX(0);
 		elm.setY(this.productBeltElement.getH() - elm.getH());
@@ -56,6 +56,14 @@ export class CoffeeHouseController {
 		this.interiorElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
 		this.interiorElement.querySelectorAll("x-product").forEach(elm => elm.tick());
 		// Update UI in coffee house
+	}
+
+	hasProduct(productId) {
+		return true;
+	}
+
+	requestProduct(productId) {
+		this.addProduct(productId);
 	}
 
 	// Delegation
@@ -73,16 +81,23 @@ export class CoffeeHouseController {
 			window.setTimeout(e => {
 				customerElm.startLeavingHappy();
 				this.dialogController.hideDialog();
-			}, 1000);
+			}, 600);
 
 		} else {
 			// No product ready for the customer to consume
 			customerElm.state = CustomerState.idle;
-			window.setTimeout(e => {
-				customerElm.state = CustomerState.waiting;
-				this.dialogController.showDialog(customerElm.request, customerElm.patienceDuration);
-				customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
-			}, 1000);
+
+			if(this.hasProduct(customerElm.request)) {
+				window.setTimeout(e => {
+					customerElm.state = CustomerState.waiting;
+					this.dialogController.showDialog(customerElm.request, customerElm.patienceDuration);
+					customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
+					this.requestProduct(customerElm.request);
+				}, 600);
+			} else {
+				customerElm.state = CustomerState.dissatisfied;
+				customerElm.startLeavingAngry();
+			}
 		}
 	}
 
@@ -94,7 +109,7 @@ export class CoffeeHouseController {
 		window.setTimeout(e => {
 			this.dialogController.hideDialog();
 			customerElm.startLeavingAngry();
-		}, 1000)
+		}, 600)
 	}
 
 	onCustomerLeft(evt) {
@@ -113,11 +128,11 @@ export class CoffeeHouseController {
 			customerElm.state = CustomerState.satisfied;
 			window.clearTimeout(customerElm.patienceTimeout);
 			this.dialogController.markAsCompleted();
-			productElm.consume();
 			window.setTimeout(e => {
+				productElm.consume();
 				customerElm.startLeavingHappy();
 				this.dialogController.hideDialog();
-			}, 2000);
+			}, 600);
 		} else {
 			console.error("A product but no customer!??");
 		}

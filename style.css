@@ -4,16 +4,53 @@
 	image-rendering: pixelated;
 }
 
+
+
+
+html, body {
+	height: 100%;
+	overflow-y: hidden;
+}
+body::-webkit-scrollbar {
+	display: none;
+}
+
+
 body {
 	font-family: sans-serif;
 	background: #000;
+	max-width: 100%;
+	overflow-x: auto;
+	
+	margin: 0 auto;
+	cursor: move;
+
+	position: relative;
+	height: 100%;
+    width: 100%;
+    display: table;
+
+    -ms-overflow-style: none;
+}
+
+#game {
+
+
+	display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+
 }
 
 #interior {
-	width: 2500px;
+
+
+	overflow-y: hidden;
+	margin: 0 auto;
+	width: 2200px;
 	height: 600px;
-	position: absolute;
 	background: #4b4b66;
+	position: relative;
 }
 
 #queue-enter,
@@ -27,7 +64,7 @@ body {
 }
 
 #product-belt {
-	width: 1800px;
+	width: 1500px;
 	height: 64px;
 	border-bottom: 1px solid #ccc;
 	position: absolute;
