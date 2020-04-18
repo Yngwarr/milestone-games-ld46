@@ -1,25 +1,30 @@
+import {Rect} from "./hgl/geometry.js"
 import {CustomerElement} from "./CustomerElement.js"
 
 export class CoffeeHouseController {
 
 	constructor(delegate) {
 		this.delegate = delegate;
-		this.queueElement = document.getElementById("world");
 		this.worldElement = document.getElementById("world");
 		this.interiorElement = document.getElementById("interior");
-		this.queueElement = document.getElementById("queue");
+		this.queueEnterElement = document.getElementById("queue-enter");
+		this.queueExitElement = document.getElementById("queue-exit");
+		CustomerElement.register();
 	}
 
 	get queueLength() {
 		return this.queueLength.childElementCount;
 	}
 
-	addCustomer(elm) {
-		let c = new CustomerElement();
-		this.queue.appendChild(elm);
+	addCustomer() {
+		let elm = new CustomerElement({});
+		this.queueEnterElement.appendChild(elm);
+		elm.setX(this.queueEnterElement.getW());
+		elm.setY(this.queueEnterElement.getH() - elm.getH());
 	}
 
 	tick() {
+		this.interiorElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
 		// Update UI in coffee house
 	}
 }

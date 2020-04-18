@@ -10,11 +10,28 @@
 	position: absolute;
 }
 
-#queue {
+#queue-enter,
+#queue-leave {
 	width: 500px;
-	height: 100px;
-	background: rgba(0,231,0,0.2);
+	height: 200px;
+	background: rgba(230,255,230,1);
 	position: absolute;
-	bottom: 200px;
+	bottom: 100px;
 	right: 25px;
+}
+
+#queue-leave {
+	background: rgba(255,230,230,1);
+}
+
+x-customer {
+	display: block;
+	width: 40px;
+	height: 180px;
+	background: rgb(244,23,213);
+	position: absolute;
+}
+
+x-customer.walking {
+	opacity: 0.5;
 }

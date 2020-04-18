@@ -87,13 +87,12 @@ class Game {
 	}
 
 	onEnterKeyUp(evt) {
-		console.log("ENTER")
+		this.coffeeHouseController.addCustomer();
 	}
 
 	onClick(evt) {
 		let elm = evt.target;
 		let point = new Point(evt.x, evt.y);
-
 	}
 
 	pause() {
@@ -118,9 +117,9 @@ class Game {
 			return;
 		}
 
-		if (this.model) {
-			this.model.tick(this);
-		}
+		this.coffeeHouseController.tick();
+		this.businessModel.tick();
+		this.productionModel.tick();
 
 		this.updateRequired = false;
 	}
