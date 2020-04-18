@@ -24,7 +24,6 @@ export class DialogController {
 		if (this.requestDialogTimerElement.dataset.progress > 10) {
 			return;
 		}
-		console.log("updateTimerProgress");
 		this.timerElapsedTime += 100;
 		let index = Math.round((this.timerElapsedTime/this.timerDuration) * 10);
 		this.setProgress(index);

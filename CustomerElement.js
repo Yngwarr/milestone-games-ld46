@@ -12,14 +12,13 @@ export class CustomerElement extends EntityElement {
 		this.data = data;
 		this.patienceDuration = 10000;
 		this.patienceTimeout = null;
-		this.state = CustomerState.IDLE;
+		this.state = CustomerState.idle;
 		if (this.data.title) {
 			this.title = this.data.title;
 		}
 	}
 
 	set state(state) {
-		console.log("setting state", state);
 		this._state = state;
 		this.dataset.state = state;
 	}
