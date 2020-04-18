@@ -20,7 +20,7 @@ export class DialogController {
 			window.clearInterval(this.timerInterval);
 			this.timerInterval = window.setInterval(this.updateTimerProgress.bind(this), 100);
 		}
-		this.requestDialogElement.setHidden(false);
+		this.requestDialogElement.setHidden(false, "flex");
 	}
 
 	createRequestItemElements(items) {

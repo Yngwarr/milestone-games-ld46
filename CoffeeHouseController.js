@@ -47,18 +47,31 @@ export class CoffeeHouseController {
 	}
 
 	addCustomer(data = {}) {
+		// Randomizing appearance
 		if (this.randomSpriteIds.length == 0) {
-			this.randomSpriteIds = Array.from({length: 20}, (_, i) => i).sort(e => {return 0.5 - Math.random()});
+			this.randomSpriteIds = Array.from({length: 20}, (_, i) => i).randomize();
 		}
-		data.sprite = this.randomSpriteIds.shift();;
+
+		// Randomizing request
+
+		let n = Math.max(1, Math.round(Math.random()*3));
+		let request = Array.from({length: n}, e => {
+			let type = Math.random() < 0.5 ? "coffee" : "pastry";
+			let index = Math.floor(Math.random()*7);
+			return `${type}_${index}`;
+		});
+
+		data.sprite = this.randomSpriteIds.shift();
+		data.request = request;
+
 		let elm = new CustomerElement(data);
 		this.queueEnterElement.appendChild(elm);
 		elm.setX(this.queueEnterElement.getW());
 		elm.setY(0);
 	}
 
-	addProduct(productId) {
-		let elm = new ProductElement(productId);
+	addProduct(productType) {
+		let elm = new ProductElement(productType);
 		this.productBeltElement.appendChild(elm);
 		elm.setX(0);
 		elm.setY(this.productBeltElement.getH() - elm.getH());
@@ -70,12 +83,15 @@ export class CoffeeHouseController {
 		// Update UI in coffee house
 	}
 
-	hasProduct(productId) {
+	hasProducts(productTypes) {
+		// TODO. Handle partial availability
 		return true;
 	}
 
-	requestProduct(productId) {
-		this.addProduct(productId);
+	requestProducts(productTypes = []) {
+		productTypes.forEach(productType => {
+			this.addProduct(productType);
+		})
 	}
 
 	// Delegation
@@ -83,29 +99,31 @@ export class CoffeeHouseController {
 	onCustomerStoppedFirstInLine(evt) {
 		let customerElm = evt.detail;
 		let productElm = this.firstInLineProduct;
-		if (productElm) {
-			// If a product is waiting for the consumer
+		if (productElm && customerElm.wantsProduct(productElm)) {
+			// If a product is waiting for the customer
 			// TODO THIS IS NO LONGER TRUE
-			window.clearTimeout(customerElm.patienceTimeout);
-			this.dialogController.showDialog(customerElm.request);
-			this.dialogController.markAsCompleted()
-			customerElm.state = CustomerState.satisfied;
-			productElm.consume();
-			window.setTimeout(e => {
-				customerElm.startLeavingHappy();
-				this.dialogController.hideDialog();
-			}, 600);
+			customerElm.takeProduct(productElm);
+			if (customerElm.validateRequestSatisfaction()) {
+				window.clearTimeout(customerElm.patienceTimeout);
+				this.dialogController.showDialog(customerElm.request);
+				this.dialogController.markAsCompleted()
+				customerElm.state = CustomerState.satisfied
+				window.setTimeout(e => {
+					customerElm.startLeavingHappy();
+					this.dialogController.hideDialog();
+				}, 600);
+			}
 
 		} else {
 			// No product ready for the customer to consume
 			customerElm.state = CustomerState.idle;
 
-			if(this.hasProduct(customerElm.request)) {
+			if(this.hasProducts(customerElm.request)) {
 				window.setTimeout(e => {
 					customerElm.state = CustomerState.waiting;
 					this.dialogController.showDialog(customerElm.request, customerElm.patienceDuration);
 					customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
-					this.requestProduct(customerElm.request);
+					this.requestProducts(customerElm.request);
 				}, 600);
 			} else {
 				customerElm.state = CustomerState.dissatisfied;
@@ -115,6 +133,7 @@ export class CoffeeHouseController {
 	}
 
 	onCustomerPatienceExpired(customerElm) {
+		debugger;
 		window.clearTimeout(customerElm.patienceTimeout);
 		// main delegate cash exchange!
 		customerElm.state = CustomerState.dissatisfied;
@@ -136,14 +155,16 @@ export class CoffeeHouseController {
 			if (customerElm.state != CustomerState.waiting) {
 				return;
 			}
-			customerElm.state = CustomerState.satisfied;
-			window.clearTimeout(customerElm.patienceTimeout);
-			this.dialogController.markAsCompleted();
-			window.setTimeout(e => {
-				productElm.consume();
-				customerElm.startLeavingHappy();
-				this.dialogController.hideDialog();
-			}, 600);
+			customerElm.takeProduct(productElm);
+			if (customerElm.validateRequestSatisfaction()) {
+				customerElm.state = CustomerState.satisfied;
+				window.clearTimeout(customerElm.patienceTimeout);
+				this.dialogController.markAsCompleted();
+				window.setTimeout(e => {
+					customerElm.startLeavingHappy();
+					this.dialogController.hideDialog();
+				}, 600);
+			}
 		} else {
 			console.error("A product but no customer!??");
 		}

@@ -2,12 +2,13 @@ import {EntityElement} from "./hgl/elements.js"
 import {Rect, Point} from "./hgl/geometry.js"
 
 export class ProductElement extends EntityElement {
-	constructor(productId) {
+	constructor(type) {
 		super();
-		this.productId = productId;
+		this.type = type;
 		this.classList.add("icon_16");
-		this.classList.add(productId);
+		this.dataset.type = type;
 		this.clicks = 0;
+		this.addEventListener("click", e => this.destroy());
 	}
 
 	set type(type) {
@@ -20,11 +21,10 @@ export class ProductElement extends EntityElement {
 	}
 
 	tick(game) {
-		// Enter or leave, queuing behind the previous customer
-		const walkSpeed = 0.3;
-		let walkDistance = 15;
+		const travelSpeed = 0.3;
+		let travelDistance = 15;
 		const distanceBetweenObjects = 10;
-		const walkDelta = walkDistance * walkSpeed;
+		const walkDelta = travelDistance * travelSpeed;
 		let minX = this.parentElement.getW() - this.getW(); 
 
 		let x = this.getX();
@@ -55,7 +55,7 @@ export class ProductElement extends EntityElement {
 		return "x-product";
 	}
 
-	consume() {
+	destroy() {
 		this.remove();
 	}
 }

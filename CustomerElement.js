@@ -11,6 +11,7 @@ export class CustomerElement extends EntityElement {
 		this.dataset.sprite = data.sprite || 0;
 
 		this.data = data;
+		this.request = data.request;
 		this.patienceDuration = 10000;
 		this.patienceTimeout = null;
 		this.state = CustomerState.idle;
@@ -26,6 +27,21 @@ export class CustomerElement extends EntityElement {
 
 	get state() {
 		return this._state;
+	}
+
+	wantsProduct(productElm) {
+		return this.request.indexOf(productElm.dataset.type) != -1;
+	}
+
+	validateRequestSatisfaction() {
+		return this.request.length == 0;
+	}
+
+	takeProduct(productElm) {
+		this.request = this.request.filter(e => {
+			return e != productElm.dataset.type;
+		});
+		productElm.destroy();
 	}
 
 	tick(game) {
