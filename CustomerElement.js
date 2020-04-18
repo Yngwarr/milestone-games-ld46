@@ -5,6 +5,10 @@ import {CustomerState} from "./Constants.js"
 export class CustomerElement extends EntityElement {
 	constructor(data) {
 		super();
+		this.spriteElement = document.createElement("div");
+		this.spriteElement.classList.add("sprite");
+		this.appendChild(this.spriteElement);
+
 		this.data = data;
 		this.patienceDuration = 10000;
 		this.patienceTimeout = null;
@@ -12,9 +16,6 @@ export class CustomerElement extends EntityElement {
 		if (this.data.title) {
 			this.title = this.data.title;
 		}
-		this.addEventListener("click", fn => {
-			this.parentElement.parentElement.querySelector("#queue-leave").appendChild(this);
-		})
 	}
 
 	set state(state) {
@@ -29,8 +30,8 @@ export class CustomerElement extends EntityElement {
 
 	tick(game) {
 		// Enter or leave, queuing behind the previous customer
-		const walkSpeed = 0.8;
-		let walkDistance = 25;
+		const walkSpeed = 0.3;
+		let walkDistance = 15;
 		const distanceBetweenCustomers = 10;
 		const walkDelta = walkDistance * walkSpeed
 		const customerIsLeaving = this.parentElement.id == "queue-leave";

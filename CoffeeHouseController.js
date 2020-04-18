@@ -105,7 +105,6 @@ export class CoffeeHouseController {
 	onProductStoppedFirstInLine(evt) {
 		let productElm = evt.detail;
 		let customerElm = this.firstInLineCustomer;
-		console.log("product arrived", productElm, customerElm, customerElm.state);
 		if (customerElm) {
 			if (customerElm.state != CustomerState.waiting) {
 				return;

@@ -22,7 +22,7 @@ body {
 	position: absolute;
 	bottom: 100px;
 	right: 25px;
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 
 #product-belt {
@@ -35,17 +35,20 @@ body {
 	overflow: hidden;
 }
 
-#queue-leave x-customer {
-	filter: brightness(80%);
+#queue-leave x-customer .sprite {
+	filter: brightness(50%);
+	transform: scale(-1, 1);
 }
 
 x-customer {
-	display: block;
-	width: 40px;
-	height: 180px;
-	background: rgb(244,23,213);
 	position: absolute;
-	text-align: center;
+}
+
+x-customer .sprite {
+	display: block;
+	width: 80px;
+	height: 160px;
+	background: transparent url("img/Characters.png") no-repeat;
 }
 
 x-product::before {
@@ -56,16 +59,6 @@ x-product::before {
 x-customer.walking {
 
 }
-
-x-customer.happy::before {
-	display: block;
-	content: "😀"
-} 
-
-x-customer.angry::before {
-	display: block;
-	content: "😡"
-} 
 
 x-product {
 	width: 48px;
@@ -90,6 +83,7 @@ UI
 	width: 200px;
 	height: 100px;
 	display: none;
+	z-index: 100;
 }
 
 #request-dialog-timer {
