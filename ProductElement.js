@@ -2,9 +2,11 @@ import {EntityElement} from "./hgl/elements.js"
 import {Rect, Point} from "./hgl/geometry.js"
 
 export class ProductElement extends EntityElement {
-	constructor(data) {
+	constructor(productId) {
 		super();
-		this.data = data;
+		this.productId = productId;
+		this.classList.add("icon_16");
+		this.classList.add(productId);
 		this.clicks = 0;
 	}
 

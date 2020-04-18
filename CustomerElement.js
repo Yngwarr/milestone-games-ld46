@@ -8,6 +8,7 @@ export class CustomerElement extends EntityElement {
 		this.spriteElement = document.createElement("div");
 		this.spriteElement.classList.add("sprite");
 		this.appendChild(this.spriteElement);
+		this.dataset.sprite = data.sprite || 0;
 
 		this.data = data;
 		this.patienceDuration = 10000;
@@ -31,7 +32,7 @@ export class CustomerElement extends EntityElement {
 		// Enter or leave, queuing behind the previous customer
 		const walkSpeed = 0.3;
 		let walkDistance = 15;
-		const distanceBetweenCustomers = 10;
+		const distanceBetweenCustomers = Math.floor(Math.random() * walkDistance * 2);
 		const walkDelta = walkDistance * walkSpeed
 		const customerIsLeaving = this.parentElement.id == "queue-leave";
 
@@ -41,9 +42,9 @@ export class CustomerElement extends EntityElement {
 		}
 
 		let x = this.getX();
-		let aheadCustomerElm = this.previousSibling;
-		if (aheadCustomerElm) {
-			targetX = aheadCustomerElm.getX()+aheadCustomerElm.getW()+distanceBetweenCustomers;
+		let customerInFront = this.previousSibling;
+		if (customerInFront) {
+			targetX = customerInFront.getX()+customerInFront.getW()+distanceBetweenCustomers;
 		}
 		
 		if (customerIsLeaving) {
@@ -59,11 +60,15 @@ export class CustomerElement extends EntityElement {
 				this.classList.add("walking");
 			} 
 		}
+
+		if (!customerIsLeaving && !customerInFront && x <= targetX) {
+			x = targetX;
+		}
 		
-		if (x == targetX) {
+		if ((!customerIsLeaving && x <= targetX) || (customerIsLeaving && x >= targetX)) {
 			if (this.classList.contains("walking")) {
 				this.classList.remove("walking");
-				if (!customerIsLeaving && !aheadCustomerElm) {
+				if (!customerIsLeaving && !customerInFront) {
 					window.dispatchEvent(new CustomEvent("customerStoppedFirstInLine", {detail:this}));
 				}
 			}
@@ -77,7 +82,7 @@ export class CustomerElement extends EntityElement {
 	}
 
 	startLeaving() {
-		this.closest("#interior").querySelector("#queue-leave").appendChild(this);
+		this.closest("#shop").querySelector("#queue-leave").appendChild(this);
 	}
 
 	startLeavingHappy() {

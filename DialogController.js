@@ -1,3 +1,5 @@
+import "./hgl/extensions.js"
+
 export class DialogController {
 	constructor(delegate) {
 		this.requestDialogElement = document.querySelector("#request-dialog");
@@ -6,10 +8,11 @@ export class DialogController {
 		this.timerDuration = 0;
 		this.timerElapsedTime = 0;
 		this.timerInterval = null;
+		this.requestDialogElement.setHidden(true);
 	}
 
-	showDialog(icon = "coffee", duration) {
-		this.requestDialogItemElement.dataset.icon = icon;
+	showDialog(items = ["coffee"], duration) {
+		this.createRequestItemElements(items);
 		if (duration) {
 			this.timerDuration = duration;
 			this.timerElapsedTime = 0;
@@ -19,6 +22,17 @@ export class DialogController {
 		}
 		this.requestDialogElement.setHidden(false);
 	}
+
+	createRequestItemElements(items) {
+		this.requestDialogElement.querySelectorAll(".item").forEach(e => e.remove());
+		items.forEach(itemId => {
+			let elm = document.createElement("div");
+			elm.classList.add("item", "icon_16");
+			elm.dataset.type = itemId;
+			this.requestDialogElement.appendChild(elm)
+		})
+	}
+
 
 	updateTimerProgress() {
 		if (this.requestDialogTimerElement.dataset.progress > 10) {

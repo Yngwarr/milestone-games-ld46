@@ -10,7 +10,7 @@ export class CoffeeHouseController {
 	constructor(delegate) {
 		this.delegate = delegate;
 		this.worldElement = document.getElementById("world");
-		this.interiorElement = document.getElementById("interior");
+		this.coffeeShopElement = document.getElementById("shop");
 		this.queueEnterElement = document.getElementById("queue-enter");
 		this.queueExitElement = document.getElementById("queue-exit");
 		this.productBeltElement = document.getElementById("product-belt");
@@ -25,8 +25,10 @@ export class CoffeeHouseController {
 
 		this.currentCustomerPatienceTimeout = null;
 
+		this.randomSpriteIds = [];
+
 		window.setInterval(e => {
-			if (Math.random() > 0.7)  {
+			if (Math.random() > 0.2)  {
 				this.addCustomer();
 			}
 		}, 300)
@@ -45,10 +47,14 @@ export class CoffeeHouseController {
 	}
 
 	addCustomer(data = {}) {
+		if (this.randomSpriteIds.length == 0) {
+			this.randomSpriteIds = Array.from({length: 20}, (_, i) => i).sort(e => {return 0.5 - Math.random()});
+		}
+		data.sprite = this.randomSpriteIds.shift();;
 		let elm = new CustomerElement(data);
 		this.queueEnterElement.appendChild(elm);
 		elm.setX(this.queueEnterElement.getW());
-		elm.setY(this.queueEnterElement.getH() - elm.getH());
+		elm.setY(0);
 	}
 
 	addProduct(productId) {
@@ -59,8 +65,8 @@ export class CoffeeHouseController {
 	}
 
 	tick() {
-		this.interiorElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
-		this.interiorElement.querySelectorAll("x-product").forEach(elm => elm.tick());
+		this.coffeeShopElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
+		this.coffeeShopElement.querySelectorAll("x-product").forEach(elm => elm.tick());
 		// Update UI in coffee house
 	}
 
@@ -79,6 +85,7 @@ export class CoffeeHouseController {
 		let productElm = this.firstInLineProduct;
 		if (productElm) {
 			// If a product is waiting for the consumer
+			// TODO THIS IS NO LONGER TRUE
 			window.clearTimeout(customerElm.patienceTimeout);
 			this.dialogController.showDialog(customerElm.request);
 			this.dialogController.markAsCompleted()
@@ -119,7 +126,6 @@ export class CoffeeHouseController {
 	}
 
 	onCustomerLeft(evt) {
-		console.log("removing", evt.detail);
 		evt.detail.remove();
 	}
 
@@ -130,7 +136,6 @@ export class CoffeeHouseController {
 			if (customerElm.state != CustomerState.waiting) {
 				return;
 			}
-			console.log("satisfied", customerElm);
 			customerElm.state = CustomerState.satisfied;
 			window.clearTimeout(customerElm.patienceTimeout);
 			this.dialogController.markAsCompleted();

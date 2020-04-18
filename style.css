@@ -5,8 +5,6 @@
 }
 
 
-
-
 html, body {
 	height: 100%;
 	overflow-y: hidden;
@@ -23,7 +21,7 @@ body {
 	overflow-x: auto;
 	
 	margin: 0 auto;
-	cursor: move;
+	cursor: grab;
 
 	position: relative;
 	height: 100%;
@@ -34,17 +32,12 @@ body {
 }
 
 #game {
-
-
 	display: table-cell;
     height: 100%;
     vertical-align: middle;
-
 }
 
-#interior {
-
-
+#shop {
 	overflow-y: hidden;
 	margin: 0 auto;
 	width: 2200px;
@@ -53,12 +46,21 @@ body {
 	position: relative;
 }
 
+#exterior {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	height: 130px;
+	background: #23233a;
+	width: 100%;
+}
+
 #queue-enter,
 #queue-leave {
 	width: 500px;
-	height: 200px;
+	height: 135px;
 	position: absolute;
-	bottom: 100px;
+	bottom: 130px;
 	right: 0;
 	overflow: hidden;
 }
@@ -66,16 +68,27 @@ body {
 #product-belt {
 	width: 1500px;
 	height: 64px;
-	border-bottom: 1px solid #ccc;
 	position: absolute;
 	bottom: 160px;
 	right: 570px;
-	overflow: hidden;
 }
 
-#queue-leave x-customer .sprite {
-	filter: brightness(50%);
-	transform: scale(-1, 1);
+#product-belt::before,
+#product-belt::after {
+	display: block;
+	position: absolute;
+	content: "";
+	background: #848484;
+	bottom: 0px;
+	left: 0;
+	right: 0;
+	height: 22px;
+} 
+
+#product-belt::after {
+	bottom: -32px;
+	height: 32px;
+	background: #545454;
 }
 
 x-customer {
@@ -84,19 +97,35 @@ x-customer {
 
 x-customer .sprite {
 	display: block;
-	width: 80px;
-	height: 160px;
+	width: 96px;
+	height: 192px;
 	background: transparent url("img/Characters.png") no-repeat;
 }
 
-x-product::before {
-	display: block;
-	content: "☕️"
-} 
-
-x-customer.walking {
-
+#queue-leave x-customer .sprite {
+	filter: brightness(50%);
+	transform: scale(-1, 1);
 }
+
+x-customer[data-sprite="1"] .sprite {background-position-x: calc(-95px*1);}
+x-customer[data-sprite="2"] .sprite {background-position-x: calc(-95px*2);}
+x-customer[data-sprite="3"] .sprite {background-position-x: calc(-95px*3);}
+x-customer[data-sprite="4"] .sprite {background-position-x: calc(-95px*4);}
+x-customer[data-sprite="5"] .sprite {background-position-x: calc(-95px*5);}
+x-customer[data-sprite="6"] .sprite {background-position-x: calc(-95px*6);}
+x-customer[data-sprite="7"] .sprite {background-position-x: calc(-95px*7);}
+x-customer[data-sprite="8"] .sprite {background-position-x: calc(-95px*8);}
+x-customer[data-sprite="9"] .sprite {background-position-x: calc(-95px*9);}
+x-customer[data-sprite="10"] .sprite {background-position-x: calc(-95px*10);}
+x-customer[data-sprite="11"] .sprite {background-position-x: calc(-95px*11);}
+x-customer[data-sprite="12"] .sprite {background-position-x: calc(-95px*12);}
+x-customer[data-sprite="13"] .sprite {background-position-x: calc(-95px*13);}
+x-customer[data-sprite="14"] .sprite {background-position-x: calc(-95px*14);}
+x-customer[data-sprite="15"] .sprite {background-position-x: calc(-95px*15);}
+x-customer[data-sprite="16"] .sprite {background-position-x: calc(-95px*16);}
+x-customer[data-sprite="17"] .sprite {background-position-x: calc(-95px*17);}
+x-customer[data-sprite="18"] .sprite {background-position-x: calc(-95px*18);}
+x-customer[data-sprite="19"] .sprite {background-position-x: calc(-95px*19);}
 
 x-product {
 	width: 48px;
@@ -120,16 +149,18 @@ UI
 	box-shadow: 5px 5px rgba(0,0,0,0.5);
 	width: 200px;
 	height: 100px;
-	display: none;
 	z-index: 100;
+	display: flex;
+}
+
+#request-dialog #request-dialog-timer,
+#request-dialog .item {
+	display: block;
+	width: 48px;
+	height: 48px;
 }
 
 #request-dialog-timer {
-	position: absolute;
-	top: -24px;
-	right: -24px;
-	width: 48px;
-	height: 48px;
 	background: transparent url("img/Sprites_16.png") no-repeat;
 	background-position: calc(-48px*0) calc(-48px*2);
 }
@@ -147,15 +178,6 @@ UI
 #request-dialog-timer[data-progress="10"] {background-position-x: calc(-48px*10); }
 #request-dialog-timer[data-progress="11"] {background-position-x: calc(-48px*11); }
 #request-dialog-timer[data-progress="12"] {background-position-x: calc(-48px*12); }
-
-#request-dialog-item {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin: -24px 0 0 -24px;
-	width: 48px;
-	height: 48px;
-}
 
 .icon_16 {
 	background: transparent url("img/Sprites_16.png") no-repeat;
