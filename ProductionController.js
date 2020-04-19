@@ -7,7 +7,7 @@ export class ProductionController {
 		this.productionDuration = {}
 		this.verboseLogging = false;
 
-		this.defaultProductionTime = 5000;
+		this.defaultProductionTime = 500;
 
 		this.storage = {};
 		this.storage[ProductCategory.beverage] = [];
@@ -100,7 +100,8 @@ export class ProductionController {
 	}
 
 	getProductionTimeForProduct(productType) {
-		return this.productionDuration[productType] || this.defaultProductionTime;
+		let calculatedDefaultProductionTime = (parseInt(productType.split("_")[1])+1 ) * this.defaultProductionTime;
+		return this.productionDuration[productType] || calculatedDefaultProductionTime;
 	}
 
 	startProductingProduct(productType) {

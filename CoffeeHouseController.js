@@ -67,7 +67,7 @@ export class CoffeeHouseController {
 
 		// Randomizing request
 
-		let n = Math.max(4, Math.round(Math.random() * 3));
+		let n = Math.max(1, Math.round(Math.random() * 3));
 		let request = Array.from({length: n}, e => {
 			let type = Math.random() < 0.5 ? "beverage" : "pastry";
 			let index = Math.floor(Math.random()*7);
