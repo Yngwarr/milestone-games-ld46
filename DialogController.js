@@ -11,7 +11,7 @@ export class DialogController {
 		this.requestDialogElement.setHidden(true);
 	}
 
-	showDialog(items = ["coffee"], duration) {
+	showDialog(items = [], duration) {
 		this.createRequestItemElements(items);
 		if (duration) {
 			this.timerDuration = duration;

@@ -27,11 +27,14 @@ export class CoffeeHouseController {
 
 		this.randomSpriteIds = [];
 
-		window.setInterval(e => {
-			if (Math.random() > 0.2)  {
+		let perhapsSpawnCustomer = e => {
+			if (this.queueLength < 5 && Math.random() > 0.2) {
 				this.addCustomer();
 			}
-		}, 300)
+			window.setTimeout(perhapsSpawnCustomer, Math.random()*2000);
+		}
+
+		perhapsSpawnCustomer();
 	}
 
 	get queueLength() {
@@ -133,7 +136,6 @@ export class CoffeeHouseController {
 	}
 
 	onCustomerPatienceExpired(customerElm) {
-		debugger;
 		window.clearTimeout(customerElm.patienceTimeout);
 		// main delegate cash exchange!
 		customerElm.state = CustomerState.dissatisfied;
@@ -146,6 +148,7 @@ export class CoffeeHouseController {
 
 	onCustomerLeft(evt) {
 		evt.detail.remove();
+		delete evt.detail;
 	}
 
 	onProductStoppedFirstInLine(evt) {

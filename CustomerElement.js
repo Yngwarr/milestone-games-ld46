@@ -38,9 +38,10 @@ export class CustomerElement extends EntityElement {
 	}
 
 	takeProduct(productElm) {
-		this.request = this.request.filter(e => {
-			return e != productElm.dataset.type;
-		});
+		let i = this.request.indexOf(productElm.type);
+		if (i != -1) {
+			this.request.splice(i, 1);
+		}
 		productElm.destroy();
 	}
 
