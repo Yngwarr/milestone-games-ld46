@@ -17,9 +17,13 @@ export class CoffeeHouseController {
 		CustomerElement.register();
 		ProductElement.register();
 
+		// Customers and Products
 		window.addEventListener("customerStoppedFirstInLine", this.onCustomerStoppedFirstInLine.bind(this));
 		window.addEventListener("productStoppedFirstInLine", this.onProductStoppedFirstInLine.bind(this));
 		window.addEventListener("customerLeft", this.onCustomerLeft.bind(this));
+		
+		// Production
+		window.addEventListener("productShipped", this.onProductShipped.bind(this));
 
 		this.dialogController = new DialogController(this);
 
@@ -35,6 +39,12 @@ export class CoffeeHouseController {
 		}
 
 		perhapsSpawnCustomer();
+	}
+
+	tick() {
+		this.coffeeShopElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
+		this.coffeeShopElement.querySelectorAll("x-product").forEach(elm => elm.tick());
+		// Update UI in coffee house
 	}
 
 	get queueLength() {
@@ -57,9 +67,9 @@ export class CoffeeHouseController {
 
 		// Randomizing request
 
-		let n = Math.max(1, Math.round(Math.random() * 3));
+		let n = Math.max(4, Math.round(Math.random() * 3));
 		let request = Array.from({length: n}, e => {
-			let type = Math.random() < 0.5 ? "coffee" : "pastry";
+			let type = Math.random() < 0.5 ? "beverage" : "pastry";
 			let index = Math.floor(Math.random()*7);
 			return `${type}_${index}`;
 		});
@@ -78,12 +88,6 @@ export class CoffeeHouseController {
 		this.productBeltElement.appendChild(elm);
 	}
 
-	tick() {
-		this.coffeeShopElement.querySelectorAll("x-customer").forEach(elm => elm.tick());
-		this.coffeeShopElement.querySelectorAll("x-product").forEach(elm => elm.tick());
-		// Update UI in coffee house
-	}
-
 	canProductProducts(productTypes) {
 		// TODO. Handle partial availability
 		return true;
@@ -91,11 +95,16 @@ export class CoffeeHouseController {
 
 	requestProducts(productTypes = []) {
 		productTypes.forEach(productType => {
-			this.addProduct(productType);
+			window.dispatchEvent(new CustomEvent("customerOrderedProduct", {detail:productType}));
 		})
 	}
 
 	// Delegation
+
+	onProductShipped(evt) {
+		let productType = evt.detail;
+		this.addProduct(productType);
+	}
 
 	onCustomerStoppedFirstInLine(evt) {
 		let customerElm = evt.detail;
@@ -105,11 +114,13 @@ export class CoffeeHouseController {
 			// TODO THIS IS NO LONGER TRUE
 			customerElm.takeProduct(productElm);
 			if (customerElm.validateRequestSatisfaction()) {
+				customerElm.payForProducts();
 				window.clearTimeout(customerElm.patienceTimeout);
 				this.dialogController.showDialog(customerElm.request);
-				this.dialogController.markAsCompleted()
+				this.dialogController.markAsHappy()
 				customerElm.state = CustomerState.satisfied
 				window.setTimeout(e => {
+					this.dialogController.hideDialog();
 					customerElm.startLeavingHappy();
 					this.dialogController.hideDialog();
 				}, 600);
@@ -126,10 +137,16 @@ export class CoffeeHouseController {
 					customerElm.state = CustomerState.waiting;
 					customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
 					this.requestProducts(customerElm.request);
-				}, 1500);
+				}, 2500);
 			} else {
-				customerElm.state = CustomerState.dissatisfied;
-				customerElm.startLeavingAngry();
+				window.setTimeout(e => {
+					this.dialogController.markAsDisappointed();
+					customerElm.state = CustomerState.disatisfied;
+					window.setTimeout(e => {
+						this.dialogController.hideDialog();
+						customerElm.startLeavingDisappointed();
+					}, 1000);
+				}, 2500);
 			}
 		}
 	}
@@ -137,8 +154,8 @@ export class CoffeeHouseController {
 	onCustomerPatienceExpired(customerElm) {
 		window.clearTimeout(customerElm.patienceTimeout);
 		// main delegate cash exchange!
-		customerElm.state = CustomerState.dissatisfied;
-		this.dialogController.markAsFailed()
+		customerElm.state = CustomerState.disatisfied;
+		this.dialogController.markAsAngry();
 		window.setTimeout(e => {
 			this.dialogController.hideDialog();
 			customerElm.startLeavingAngry();
@@ -146,6 +163,17 @@ export class CoffeeHouseController {
 	}
 
 	onCustomerLeft(evt) {
+		switch(evt.detail.dataset.outcome) {
+			case "happy":
+				window.dispatchEvent(new CustomEvent("customerLeftHappy"));
+			break;
+			case "angry":
+				window.dispatchEvent(new CustomEvent("customerLeftAngry"));
+			break;
+			case "disappointed":
+				window.dispatchEvent(new CustomEvent("customerLeftDisappointed"));
+			break;
+		}
 		evt.detail.remove();
 		delete evt.detail;
 	}
@@ -162,7 +190,7 @@ export class CoffeeHouseController {
 			if (customerElm.validateRequestSatisfaction()) {
 				customerElm.state = CustomerState.satisfied;
 				window.clearTimeout(customerElm.patienceTimeout);
-				this.dialogController.markAsCompleted();
+				this.dialogController.markAsHappy();
 				window.setTimeout(e => {
 					customerElm.startLeavingHappy();
 					this.dialogController.hideDialog();

@@ -28,8 +28,12 @@ class Game {
 		this.currentDialog = null;
 		this.paused = false;
 
+		window.addEventListener("businessDataUpdated", this.onBusinessDataUpdated.bind(this));
+
 		this.init();
 	}
+
+
 
 	get fpsInterval() {
 		return (1000 / 60) / this.speed;
@@ -164,6 +168,11 @@ class Game {
 
 	logOutput(message, ms = 3000) {
 
+	}
+
+	onBusinessDataUpdated(evt) {
+		console.log("CSAT", this.businessModel.customerSatisfaction);
+		console.log("money", this.businessModel.money);
 	}
 
 	translateClientPointToWorldPoint(point) {

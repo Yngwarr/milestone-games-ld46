@@ -9,12 +9,12 @@ export class DialogController {
 		this.timerElapsedTime = 0;
 		this.timerInterval = null;
 		this.requestDialogElement.setHidden(true);
-		this.markAsIdle();
+		this.markAsAsking();
 	}
 
 	showDialog(items = []) {
 		this.createRequestItemElements(items);
-		this.markAsIdle();
+		this.markAsAsking();
 		this.requestDialogElement.setHidden(false, "flex");
 	}
 
@@ -26,14 +26,20 @@ export class DialogController {
 		this.timerInterval = window.setInterval(this.updateTimerProgress.bind(this), 100);
 	}
 
+	removeRequestItems() {
+		this.requestDialogElement.querySelectorAll(".item").forEach(e => e.remove());		
+	}
+
 	createRequestItemElements(items) {
-		this.requestDialogElement.querySelectorAll(".item").forEach(e => e.remove());
+		this.removeRequestItems();
 		items.forEach(itemId => {
 			let elm = document.createElement("div");
 			elm.classList.add("item", "icon_16");
 			elm.dataset.type = itemId;
 			this.requestDialogElement.appendChild(elm)
 		})
+		// Move timer last
+		this.requestDialogElement.appendChild(this.requestDialogTimerElement);
 	}
 
 	completeItem(itemType) {
@@ -58,18 +64,26 @@ export class DialogController {
 		this.requestDialogTimerElement.dataset.progress = progress;
 	}
 
-	markAsCompleted() {
+	markAsHappy() {
 		window.clearInterval(this.timerInterval);
+		this.removeRequestItems();
 		this.requestDialogTimerElement.dataset.progress = 11;
 	}
 
-	markAsFailed() {
+	markAsAngry() {
 		window.clearInterval(this.timerInterval);
+		this.removeRequestItems();
 		this.requestDialogTimerElement.dataset.progress = 12;
 	}
 
-	markAsIdle() {
+	markAsAsking() {
 		this.requestDialogTimerElement.dataset.progress = 13;
+	}
+
+	markAsDisappointed() {
+		window.clearInterval(this.timerInterval);
+		this.removeRequestItems();
+		this.requestDialogTimerElement.dataset.progress = 14;
 	}
 
 	hideDialog() {

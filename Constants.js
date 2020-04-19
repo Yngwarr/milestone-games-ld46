@@ -2,6 +2,14 @@ export const CustomerState = {
 	idle: "idle",
 	waiting: "waiting",
 	satisfied: "satisfied",
-	dissatisfied: "dissatisfied",
+	disatisfied: "disatisfied",
 }
 Object.freeze(CustomerState)
+
+export const ProductCategory = {
+	beverage: "beverage",
+	breakfast: "breakfast",
+	pastry: "pastry",
+	lunch: "lunch",
+}
+Object.freeze(ProductCategory)

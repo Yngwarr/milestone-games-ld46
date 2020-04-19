@@ -16,7 +16,8 @@ export class CustomerElement extends EntityElement {
 
 		this.data = data;
 		this.request = data.request;
-		this.patienceDuration = 10000;
+		this.purchasedProducts = [];
+		this.patienceDuration = 100000;
 		this.patienceTimeout = null;
 		this.state = CustomerState.idle;
 		if (this.data.title) {
@@ -45,8 +46,13 @@ export class CustomerElement extends EntityElement {
 		let i = this.request.indexOf(productElm.type);
 		if (i != -1) {
 			this.request.splice(i, 1);
+			this.purchasedProducts.push(productElm.type);
 		}
 		productElm.destroy();
+	}
+
+	payForProducts() {
+		window.dispatchEvent(new CustomEvent("customerPaidForProducts", {detail:this.purchasedProducts.clone()}));
 	}
 
 	tick(game) {
@@ -110,12 +116,20 @@ export class CustomerElement extends EntityElement {
 
 	startLeavingHappy() {
 		this.startLeaving();
-		this.classList.add("happy");
+		this.dataset.outcome = "happy";
+		this.classList.add(this.dataset.outcome);
+	}
+
+	startLeavingDisappointed() {
+		this.startLeaving();
+		this.dataset.outcome = "disappointed";
+		this.classList.add(this.dataset.outcome);
 	}
 
 	startLeavingAngry() {
 		this.startLeaving();
-		this.classList.add("angry");
+		this.dataset.outcome = "angry";
+		this.classList.add(this.dataset.outcome);
 	}
 
 	static selector() {

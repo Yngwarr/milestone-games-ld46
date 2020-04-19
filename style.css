@@ -195,7 +195,7 @@ UI
 	height: 100px;
 	z-index: 100;
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	flex-wrap: nowrap;
 	justify-content: space-around;
 	align-items: center;
@@ -234,6 +234,22 @@ UI
 #request-dialog-timer[data-progress="11"] {background-position-x: calc(-48px*11); }
 #request-dialog-timer[data-progress="12"] {background-position-x: calc(-48px*12); }
 #request-dialog-timer[data-progress="13"] {background-position-x: calc(-48px*13); }
+#request-dialog-timer[data-progress="14"] {background-position-x: calc(-48px*14); }
+
+#request-dialog-timer[data-progress="5"],
+#request-dialog-timer[data-progress="6"],
+#request-dialog-timer[data-progress="7"] {
+	animation: shakeLow 0.3s infinite;
+}
+
+#request-dialog-timer[data-progress="8"],
+#request-dialog-timer[data-progress="9"] {
+	animation: shakeMedium 0.2s infinite;
+}
+
+#request-dialog-timer[data-progress="10"] {
+	animation: shakeHigh 0.1s infinite;
+}
 
 .icon_16 {
 	background: transparent url("img/Sprites_16.png") no-repeat;
@@ -256,3 +272,27 @@ UI
 .icon_16[data-type="pastry_5"] {background-position: calc(-48px*5) calc(-48px*1); }
 .icon_16[data-type="pastry_6"] {background-position: calc(-48px*6) calc(-48px*1); }
 .icon_16[data-type="pastry_7"] {background-position: calc(-48px*7) calc(-48px*1); }
+
+@keyframes shakeLow {
+	25% {transform: translate(-1px, -1px);}
+	33% {transform: translate(1px, 0);}
+	50% {transform: translate(-1px, -1px);}
+	66% {transform: translate(0, -1px);}
+	75% {transform: translate(-1px, 1px);}
+}
+
+@keyframes shakeMedium {
+	25% {transform: translate(-2px, -2px);}
+	33% {transform: translate(2px, 0);}
+	50% {transform: translate(-2px, -2px);}
+	66% {transform: translate(0, -2px);}
+	75% {transform: translate(-2px, 2px);}
+}
+
+@keyframes shakeHigh {
+	25% {transform: translate(-3px, -3px);}
+	33% {transform: translate(3px, 0);}
+	50% {transform: translate(-3px, -3px);}
+	66% {transform: translate(0, -3px);}
+	75% {transform: translate(-3px, 3px);}
+}
