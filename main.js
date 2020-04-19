@@ -211,18 +211,6 @@ class Game {
 		}
 	}
 
-	translateClientPointToWorldPoint(point) {
-		let worldRect = this.gameElement.getRect();
-		let translatedPoint = point.clone();
-		translatedPoint.x -= worldRect.x;
-		//NOTE: Disable vertical offset since it doesn't work on iOS
-		translatedPoint.y -= worldRect.y;
-		//console.log(this.model.worldContentElement.scrollLeft, this.model.worldContentElement.scrollTop);
-		translatedPoint.x = Math.round(translatedPoint.x * 100) / 100;
-		translatedPoint.y = Math.round(translatedPoint.y * 100) / 100;
-		return translatedPoint;
-	}
-
 }
 
 window.g = new Game();
