@@ -53,6 +53,7 @@ body {
 	bottom: 0;
 	right: 0;
 	background: transparent url("img/Foreground.png") no-repeat bottom right;
+	pointer-events: none;
 }
 
 #queue-enter,
