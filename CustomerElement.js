@@ -17,7 +17,7 @@ export class CustomerElement extends EntityElement {
 		this.data = data;
 		this.request = data.request;
 		this.purchasedProducts = [];
-		this.patienceDuration = 25000;
+		this.patienceDuration = 22000;
 		this.patienceTimeout = null;
 		this.state = CustomerState.idle;
 		if (this.data.title) {

@@ -251,6 +251,10 @@ UI
 	animation: shakeHigh 0.1s infinite;
 }
 
+#request-dialog-timer[data-progress="12"] {
+	animation: shakeLow 0.1s infinite;
+}
+
 .icon_16 {
 	background: transparent url("img/Sprites_16.png") no-repeat;
 }
