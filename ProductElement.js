@@ -58,6 +58,9 @@ export class ProductElement extends EntityElement {
 	}
 
 	destroy() {
-		this.remove();
+		this.classList.add("taken");
+		window.setTimeout(e => {
+			this.remove();			
+		}, 300);
 	}
 }

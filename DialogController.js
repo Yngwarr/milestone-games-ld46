@@ -33,6 +33,14 @@ export class DialogController {
 		})
 	}
 
+	completeItem(itemType) {
+		let elm = this.requestDialogElement.querySelector(`[data-type="${itemType}"]:not(.completed)`);
+		if (elm) {
+			elm.classList.add("completed");
+		} else {
+			console.warn("tried to complete item that does not exist", itemType)
+		}
+	}
 
 	updateTimerProgress() {
 		if (this.requestDialogTimerElement.dataset.progress > 10) {

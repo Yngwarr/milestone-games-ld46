@@ -5,9 +5,13 @@ import {CustomerState} from "./Constants.js"
 export class CustomerElement extends EntityElement {
 	constructor(data) {
 		super();
+		this.wrapperElement = document.createElement("div");
+		this.wrapperElement.classList.add("wrapper");
 		this.spriteElement = document.createElement("div");
 		this.spriteElement.classList.add("sprite");
-		this.appendChild(this.spriteElement);
+		this.appendChild(this.wrapperElement);
+		this.wrapperElement.appendChild(this.spriteElement);
+		this.wrapperElement.appendChild(this.spriteElement);
 		this.dataset.sprite = data.sprite || 0;
 
 		this.data = data;

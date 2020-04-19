@@ -42,7 +42,7 @@ body {
 	margin: 0 auto;
 	width: 2200px;
 	height: 600px;
-	background: #4b4b66;
+	background: transparent url("img/Backgrounds.png") no-repeat bottom right;
 	position: relative;
 }
 
@@ -50,45 +50,32 @@ body {
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	height: 130px;
+	height: 100px;
 	background: #23233a;
 	width: 100%;
+	display: none;
 }
 
 #queue-enter,
 #queue-leave {
-	width: 500px;
-	height: 135px;
+	width: 540px;
+	height: 250px;
 	position: absolute;
-	bottom: 130px;
+	bottom: 0;
 	right: 0;
 	overflow: hidden;
+}
+
+#queue-leave {
+	height: 260px;
 }
 
 #product-belt {
 	width: 1500px;
 	height: 64px;
 	position: absolute;
-	bottom: 160px;
+	bottom: 150px;
 	right: 530px;
-}
-
-#product-belt::before,
-#product-belt::after {
-	display: block;
-	position: absolute;
-	content: "";
-	background: #848484;
-	bottom: 0px;
-	left: 0;
-	right: 0;
-	height: 22px;
-} 
-
-#product-belt::after {
-	bottom: -32px;
-	height: 32px;
-	background: #545454;
 }
 
 x-customer {
@@ -96,37 +83,86 @@ x-customer {
 	transition: transform .1s ease-out;
 }
 
+
+x-customer.walking .wrapper {
+	animation: walking .3s infinite;
+}
+
+@keyframes walking {
+	50% {transform: translate(3px, -5px) rotate(-2deg);}
+}
+
+x-customer[data-state="waiting"] .wrapper {
+	animation: waiting 3s infinite ease-in;
+	transform-origin: bottom center;
+}
+
+x-customer[data-state="waiting"] .sprite {
+	filter: brightness(110%) saturate(110%);
+}
+
+@keyframes waiting {
+	50% {transform: scaleY(1.04);}
+}
+
+x-customer[data-state="idle"]:not(.walking) .wrapper {
+	animation: idle 3s infinite ease-in;
+	transform-origin: bottom center;
+}
+
+@keyframes idle {
+	50% {transform: scaleY(0.97);}
+}
+
+#queue-leave x-customer .sprite {
+	filter: brightness(80%) saturate(80%);
+	transform: scale(-1, 1);
+}
+
+#barista .sprite,
 x-customer .sprite {
 	display: block;
 	width: 96px;
 	height: 192px;
-	background: transparent url("img/Characters.png") no-repeat;
+	background-image: url("img/Characters.png");
+	background-repeat: no-repeat;
 }
 
-#queue-leave x-customer .sprite {
-	filter: brightness(40%) saturate(80%);
+
+
+#barista {
+	position: absolute;
+	bottom: 60px;
+	right: 580px;
+	height: 180px;
+}
+
+#barista .sprite {
+	height: 120px;
+	overflow: hidden;
 	transform: scale(-1, 1);
 }
 
-x-customer[data-sprite="1"] .sprite {background-position-x: calc(-95px*1);}
-x-customer[data-sprite="2"] .sprite {background-position-x: calc(-95px*2);}
-x-customer[data-sprite="3"] .sprite {background-position-x: calc(-95px*3);}
-x-customer[data-sprite="4"] .sprite {background-position-x: calc(-95px*4);}
-x-customer[data-sprite="5"] .sprite {background-position-x: calc(-95px*5);}
-x-customer[data-sprite="6"] .sprite {background-position-x: calc(-95px*6);}
-x-customer[data-sprite="7"] .sprite {background-position-x: calc(-95px*7);}
-x-customer[data-sprite="8"] .sprite {background-position-x: calc(-95px*8);}
-x-customer[data-sprite="9"] .sprite {background-position-x: calc(-95px*9);}
-x-customer[data-sprite="10"] .sprite {background-position-x: calc(-95px*10);}
-x-customer[data-sprite="11"] .sprite {background-position-x: calc(-95px*11);}
-x-customer[data-sprite="12"] .sprite {background-position-x: calc(-95px*12);}
-x-customer[data-sprite="13"] .sprite {background-position-x: calc(-95px*13);}
-x-customer[data-sprite="14"] .sprite {background-position-x: calc(-95px*14);}
-x-customer[data-sprite="15"] .sprite {background-position-x: calc(-95px*15);}
-x-customer[data-sprite="16"] .sprite {background-position-x: calc(-95px*16);}
-x-customer[data-sprite="17"] .sprite {background-position-x: calc(-95px*17);}
-x-customer[data-sprite="18"] .sprite {background-position-x: calc(-95px*18);}
-x-customer[data-sprite="19"] .sprite {background-position-x: calc(-95px*19);}
+
+[data-sprite="1"] .sprite {background-position-x: calc(-95px*1);}
+[data-sprite="2"] .sprite {background-position-x: calc(-95px*2);}
+[data-sprite="3"] .sprite {background-position-x: calc(-95px*3);}
+[data-sprite="4"] .sprite {background-position-x: calc(-95px*4);}
+[data-sprite="5"] .sprite {background-position-x: calc(-95px*5);}
+[data-sprite="6"] .sprite {background-position-x: calc(-95px*6);}
+[data-sprite="7"] .sprite {background-position-x: calc(-95px*7);}
+[data-sprite="8"] .sprite {background-position-x: calc(-95px*8);}
+[data-sprite="9"] .sprite {background-position-x: calc(-95px*9);}
+[data-sprite="10"] .sprite {background-position-x: calc(-95px*10);}
+[data-sprite="11"] .sprite {background-position-x: calc(-95px*11);}
+[data-sprite="12"] .sprite {background-position-x: calc(-95px*12);}
+[data-sprite="13"] .sprite {background-position-x: calc(-95px*13);}
+[data-sprite="14"] .sprite {background-position-x: calc(-95px*14);}
+[data-sprite="15"] .sprite {background-position-x: calc(-95px*15);}
+[data-sprite="16"] .sprite {background-position-x: calc(-95px*16);}
+[data-sprite="17"] .sprite {background-position-x: calc(-95px*17);}
+[data-sprite="18"] .sprite {background-position-x: calc(-95px*18);}
+[data-sprite="19"] .sprite {background-position-x: calc(-95px*19);}
 
 x-product {
 	width: 48px;
@@ -135,7 +171,13 @@ x-product {
 	background: #ccc;
 	display: block;
 	text-align: center;
-	transition: transform .1s ease-out;
+	transition: all .3s ease-out;
+	opacity: 1;
+}
+
+x-product.taken {
+	opacity: 0;
+	margin: -16px -16px 0 0;
 }
 
 /*
@@ -166,6 +208,11 @@ UI
 	width: 48px;
 	height: 48px;
 	margin: 0 8px;
+}
+
+#request-dialog .item.completed {
+	opacity: 0.5;
+	filter: saturate(50%);
 }
 
 #request-dialog-timer {

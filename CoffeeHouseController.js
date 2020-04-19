@@ -52,7 +52,7 @@ export class CoffeeHouseController {
 	addCustomer(data = {}) {
 		// Randomizing appearance
 		if (this.randomSpriteIds.length == 0) {
-			this.randomSpriteIds = Array.from({length: 13}, (_, i) => i).randomize();
+			this.randomSpriteIds = Array.from({length: 19}, (_, i) => i).randomize();
 		}
 
 		// Randomizing request
@@ -68,7 +68,7 @@ export class CoffeeHouseController {
 		data.request = request;
 
 		let elm = new CustomerElement(data);
-		elm.rect = new Rect(this.queueEnterElement.getW(), 0, 96, 192);
+		elm.rect = new Rect(this.queueEnterElement.getW(), 16, 96, 192);
 		this.queueEnterElement.appendChild(elm);
 	}
 
@@ -156,6 +156,7 @@ export class CoffeeHouseController {
 			if (customerElm.state != CustomerState.waiting) {
 				return;
 			}
+			this.dialogController.completeItem(productElm.type);
 			customerElm.takeProduct(productElm);
 			if (customerElm.validateRequestSatisfaction()) {
 				customerElm.state = CustomerState.satisfied;
