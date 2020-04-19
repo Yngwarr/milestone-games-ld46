@@ -9,18 +9,21 @@ export class DialogController {
 		this.timerElapsedTime = 0;
 		this.timerInterval = null;
 		this.requestDialogElement.setHidden(true);
+		this.markAsIdle();
 	}
 
-	showDialog(items = [], duration) {
+	showDialog(items = []) {
 		this.createRequestItemElements(items);
-		if (duration) {
-			this.timerDuration = duration;
-			this.timerElapsedTime = 0;
-			this.setProgress(0);
-			window.clearInterval(this.timerInterval);
-			this.timerInterval = window.setInterval(this.updateTimerProgress.bind(this), 100);
-		}
+		this.markAsIdle();
 		this.requestDialogElement.setHidden(false, "flex");
+	}
+
+	startTimer(duration) {
+		this.timerDuration = duration;
+		this.timerElapsedTime = 0;
+		this.setProgress(0);
+		window.clearInterval(this.timerInterval);
+		this.timerInterval = window.setInterval(this.updateTimerProgress.bind(this), 100);
 	}
 
 	createRequestItemElements(items) {
@@ -63,6 +66,10 @@ export class DialogController {
 	markAsFailed() {
 		window.clearInterval(this.timerInterval);
 		this.requestDialogTimerElement.dataset.progress = 12;
+	}
+
+	markAsIdle() {
+		this.requestDialogTimerElement.dataset.progress = 13;
 	}
 
 	hideDialog() {

@@ -84,7 +84,7 @@ export class CoffeeHouseController {
 		// Update UI in coffee house
 	}
 
-	hasProducts(productTypes) {
+	canProductProducts(productTypes) {
 		// TODO. Handle partial availability
 		return true;
 	}
@@ -119,13 +119,14 @@ export class CoffeeHouseController {
 			// No product ready for the customer to consume
 			customerElm.state = CustomerState.idle;
 
-			if(this.hasProducts(customerElm.request)) {
+			this.dialogController.showDialog(customerElm.request);
+			if(this.canProductProducts(customerElm.request)) {
 				window.setTimeout(e => {
+					this.dialogController.startTimer(customerElm.patienceDuration);
 					customerElm.state = CustomerState.waiting;
-					this.dialogController.showDialog(customerElm.request, customerElm.patienceDuration);
 					customerElm.patienceTimeout = window.setTimeout(this.onCustomerPatienceExpired.bind(this), customerElm.patienceDuration, customerElm);
 					this.requestProducts(customerElm.request);
-				}, 600);
+				}, 1500);
 			} else {
 				customerElm.state = CustomerState.dissatisfied;
 				customerElm.startLeavingAngry();

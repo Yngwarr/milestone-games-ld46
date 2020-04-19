@@ -75,7 +75,7 @@ body {
 	height: 64px;
 	position: absolute;
 	bottom: 150px;
-	right: 530px;
+	right: 570px;
 }
 
 x-customer {
@@ -177,7 +177,7 @@ x-product {
 
 x-product.taken {
 	opacity: 0;
-	margin: -16px -16px 0 0;
+	margin: -32px -64px 0 0;
 }
 
 /*
@@ -233,6 +233,7 @@ UI
 #request-dialog-timer[data-progress="10"] {background-position-x: calc(-48px*10); }
 #request-dialog-timer[data-progress="11"] {background-position-x: calc(-48px*11); }
 #request-dialog-timer[data-progress="12"] {background-position-x: calc(-48px*12); }
+#request-dialog-timer[data-progress="13"] {background-position-x: calc(-48px*13); }
 
 .icon_16 {
 	background: transparent url("img/Sprites_16.png") no-repeat;
