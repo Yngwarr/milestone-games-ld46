@@ -85,7 +85,8 @@ export class CoffeeHouseController {
 	addProduct(productType) {
 		let elm = new ProductElement(productType);
 		let startX = 0;
-		switch(ProductElement.getProductCategoryFromProductType(productType)) {
+		let productCategory = ProductElement.getProductCategoryFromProductType(productType);
+		switch(productCategory) {
 			case "beverage":
 				startX = 1123;
 				break;
@@ -96,7 +97,10 @@ export class CoffeeHouseController {
 				startX = 0;
 				break;
 		}
+		console.log("creating a ",productCategory,productType,"at", startX);
 		elm.rect = new Rect(startX, this.productBeltElement.getH() - 48, 48, 48);
+		elm.classList.add("new");
+		window.setTimeout(e => {elm.classList.remove("new")}, 50);
 		this.productBeltElement.appendChild(elm);
 	}
 
@@ -171,7 +175,7 @@ export class CoffeeHouseController {
 		window.setTimeout(e => {
 			this.dialogController.hideDialog();
 			customerElm.startLeavingAngry();
-		}, 600)
+		}, 1000)
 	}
 
 	onCustomerLeft(evt) {

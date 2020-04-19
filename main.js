@@ -76,8 +76,8 @@ class Game {
 		window.addEventListener("mousemove", e => {
 			if (!mouseDown) return;
 			e.preventDefault();
-			const walk = e.pageX - mouseDownX;
-			window.scrollBy({left:-walk*8, behavior:"smooth"});
+			const dragDistance = e.pageX - mouseDownX;
+			window.scrollBy({left:-dragDistance*4, behavior:"smooth"});
 		});
 	}
 

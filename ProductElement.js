@@ -36,6 +36,12 @@ export class ProductElement extends EntityElement {
 		if (aheadObjectElm) {
 			minX = aheadObjectElm.point.x - this.getW() - distanceBetweenObjects;
 		}
+		if (minX < x) {
+			this.classList.add("hold");
+			return;
+		} else {
+			this.classList.remove("hold");
+		}
 	
 		if (x < minX) {
 			x += walkDelta;
