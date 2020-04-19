@@ -93,6 +93,7 @@ body {
 
 x-customer {
 	position: absolute;
+	transition: transform .1s ease-out;
 }
 
 x-customer .sprite {
@@ -103,7 +104,7 @@ x-customer .sprite {
 }
 
 #queue-leave x-customer .sprite {
-	filter: brightness(50%);
+	filter: brightness(40%) saturate(80%);
 	transform: scale(-1, 1);
 }
 
@@ -134,6 +135,7 @@ x-product {
 	background: #ccc;
 	display: block;
 	text-align: center;
+	transition: transform .1s ease-out;
 }
 
 /*

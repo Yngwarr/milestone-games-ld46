@@ -1,4 +1,4 @@
-import {Rect} from "./hgl/geometry.js"
+import {Rect, Point} from "./hgl/geometry.js"
 import {CustomerElement} from "./CustomerElement.js"
 import {ProductElement} from "./ProductElement.js"
 import {CustomerState} from "./Constants.js"
@@ -31,7 +31,7 @@ export class CoffeeHouseController {
 			if (this.queueLength < 5 && Math.random() > 0.2) {
 				this.addCustomer();
 			}
-			window.setTimeout(perhapsSpawnCustomer, Math.random()*2000);
+			window.setTimeout(perhapsSpawnCustomer, Math.random()*500);
 		}
 
 		perhapsSpawnCustomer();
@@ -57,7 +57,7 @@ export class CoffeeHouseController {
 
 		// Randomizing request
 
-		let n = Math.max(1, Math.round(Math.random()*3));
+		let n = Math.max(1, Math.round(Math.random() * 3));
 		let request = Array.from({length: n}, e => {
 			let type = Math.random() < 0.5 ? "coffee" : "pastry";
 			let index = Math.floor(Math.random()*7);
@@ -68,16 +68,14 @@ export class CoffeeHouseController {
 		data.request = request;
 
 		let elm = new CustomerElement(data);
+		elm.rect = new Rect(this.queueEnterElement.getW(), 0, 96, 192);
 		this.queueEnterElement.appendChild(elm);
-		elm.setX(this.queueEnterElement.getW());
-		elm.setY(0);
 	}
 
 	addProduct(productType) {
 		let elm = new ProductElement(productType);
+		elm.rect = new Rect(0, this.productBeltElement.getH() - 48, 48, 48);
 		this.productBeltElement.appendChild(elm);
-		elm.setX(0);
-		elm.setY(this.productBeltElement.getH() - elm.getH());
 	}
 
 	tick() {

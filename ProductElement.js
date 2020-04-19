@@ -22,15 +22,15 @@ export class ProductElement extends EntityElement {
 
 	tick(game) {
 		const travelSpeed = 0.3;
-		let travelDistance = 15;
+		let travelDistance = 30;
 		const distanceBetweenObjects = 10;
 		const walkDelta = travelDistance * travelSpeed;
 		let minX = this.parentElement.getW() - this.getW(); 
 
-		let x = this.getX();
+		let x = this.point.x;
 		let aheadObjectElm = this.previousSibling;
 		if (aheadObjectElm) {
-			minX = aheadObjectElm.getX() - this.getW() - distanceBetweenObjects;
+			minX = aheadObjectElm.point.x - this.getW() - distanceBetweenObjects;
 		}
 	
 		if (x < minX) {
@@ -48,7 +48,9 @@ export class ProductElement extends EntityElement {
 			}
 		}
 
-		this.setX(x);
+		let point = this.point;
+		point.x = x;
+		this.point = point;
 	}
 
 	static selector() {

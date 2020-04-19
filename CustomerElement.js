@@ -49,7 +49,7 @@ export class CustomerElement extends EntityElement {
 		// Enter or leave, queuing behind the previous customer
 		const walkSpeed = 0.3;
 		let walkDistance = 15;
-		const distanceBetweenCustomers = Math.floor(Math.random() * walkDistance * 2);
+		const distanceBetweenCustomers = Math.floor((Math.random() * walkDistance) * 2);
 		const walkDelta = walkDistance * walkSpeed
 		const customerIsLeaving = this.parentElement.id == "queue-leave";
 
@@ -58,10 +58,10 @@ export class CustomerElement extends EntityElement {
 			targetX = this.parentElement.getW();
 		}
 
-		let x = this.getX();
+		let x = this.point.x;
 		let customerInFront = this.previousSibling;
 		if (customerInFront) {
-			targetX = customerInFront.getX()+customerInFront.getW()+distanceBetweenCustomers;
+			targetX = customerInFront.point.x + customerInFront.getW() + distanceBetweenCustomers;
 		}
 		
 		if (customerIsLeaving) {
@@ -91,7 +91,9 @@ export class CustomerElement extends EntityElement {
 			}
 		}
 
-		this.setX(x);
+		let point = this.point;
+		point.x = x;
+		this.point = point;
 	}
 
 	leave() {
