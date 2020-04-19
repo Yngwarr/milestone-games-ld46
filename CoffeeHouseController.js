@@ -84,7 +84,19 @@ export class CoffeeHouseController {
 
 	addProduct(productType) {
 		let elm = new ProductElement(productType);
-		elm.rect = new Rect(0, this.productBeltElement.getH() - 48, 48, 48);
+		let startX = 0;
+		switch(ProductElement.getProductCategoryFromProductType(productType)) {
+			case "beverage":
+				startX = 1123;
+				break;
+			case "pastry":
+				startX = 550;
+				break;
+			case "breakfast":
+				startX = 0;
+				break;
+		}
+		elm.rect = new Rect(startX, this.productBeltElement.getH() - 48, 48, 48);
 		this.productBeltElement.appendChild(elm);
 	}
 

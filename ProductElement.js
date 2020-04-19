@@ -11,6 +11,10 @@ export class ProductElement extends EntityElement {
 		this.addEventListener("click", e => this.destroy());
 	}
 
+	static getProductCategoryFromProductType(productType) {
+		return productType.split("_")[0];
+	}
+
 	set type(type) {
 		this._type = type;
 		this.dataset.type = type;

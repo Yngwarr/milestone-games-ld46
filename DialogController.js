@@ -52,11 +52,11 @@ export class DialogController {
 	}
 
 	updateTimerProgress() {
-		if (this.requestDialogTimerElement.dataset.progress > 10) {
+		if (this.requestDialogTimerElement.dataset.progress > 8) {
 			return;
 		}
 		this.timerElapsedTime += 100;
-		let index = Math.round((this.timerElapsedTime/this.timerDuration) * 10);
+		let index = Math.round((this.timerElapsedTime/this.timerDuration) * 8);
 		this.setProgress(index);
 	}
 

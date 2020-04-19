@@ -1,3 +1,4 @@
+import {ProductElement} from "./ProductElement.js"
 import {ProductCategory} from "./Constants.js"
 
 export class ProductionController {
@@ -59,7 +60,7 @@ export class ProductionController {
 	}
 
 	getProductCategoryFromProductType(productType) {
-		return productType.split("_")[0];
+		return ProductElement.getProductCategoryFromProductType(productType);
 	}
 
 	hasProductInStorage(productType) {

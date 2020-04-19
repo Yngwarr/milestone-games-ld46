@@ -40,7 +40,7 @@ body {
 #shop {
 	overflow-y: hidden;
 	margin: 0 auto;
-	width: 2200px;
+	width: 3200px;
 	height: 600px;
 	background: transparent url("img/Backgrounds.png") no-repeat bottom right;
 	position: relative;
@@ -71,7 +71,7 @@ body {
 }
 
 #product-belt {
-	width: 1500px;
+	width: 2045px;
 	height: 64px;
 	position: absolute;
 	bottom: 150px;
@@ -171,8 +171,13 @@ x-product {
 	background: #ccc;
 	display: block;
 	text-align: center;
-	transition: all .3s ease-out;
+	transition: margin .3s ease-out, filter .3s ease-out;
 	opacity: 1;
+	filter: brightness(100%);
+}
+
+x-product.new {
+	filter: brightness(20%);
 }
 
 x-product.taken {
@@ -252,7 +257,7 @@ UI
 }
 
 #request-dialog-timer[data-progress="12"] {
-	animation: shakeLow 0.1s infinite;
+	animation: shakeLow 0.3s infinite;
 }
 
 .icon_16 {
