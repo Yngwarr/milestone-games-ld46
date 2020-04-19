@@ -22,7 +22,7 @@ export class ProductElement extends EntityElement {
 
 	tick(game) {
 		const travelSpeed = 0.3;
-		let travelDistance = 30;
+		let travelDistance = 15;
 		const distanceBetweenObjects = 10;
 		const walkDelta = travelDistance * travelSpeed;
 		let minX = this.parentElement.getW() - this.getW(); 
