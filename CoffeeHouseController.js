@@ -38,7 +38,7 @@ export class CoffeeHouseController {
 			window.setTimeout(perhapsSpawnCustomer, Math.random()*500);
 		}
 
-		perhapsSpawnCustomer();
+		//perhapsSpawnCustomer();
 	}
 
 	tick() {
@@ -67,7 +67,7 @@ export class CoffeeHouseController {
 
 		// Randomizing request
 
-		let n = Math.max(1, Math.round(Math.random() * 3));
+		let n = Math.max(5, Math.round(Math.random() * 3));
 		let request = Array.from({length: n}, e => {
 			let type = Math.random() < 0.5 ? "beverage" : "pastry";
 			let index = Math.floor(Math.random()*7);
@@ -103,8 +103,7 @@ export class CoffeeHouseController {
 		this.productBeltElement.appendChild(elm);
 	}
 
-	canProductProducts(productTypes) {
-		// TODO. Handle partial availability
+	canOfferProduct(productTypes) {
 		return true;
 	}
 
@@ -146,7 +145,7 @@ export class CoffeeHouseController {
 			customerElm.state = CustomerState.idle;
 
 			this.dialogController.showDialog(customerElm.request);
-			if(this.canProductProducts(customerElm.request)) {
+			if(this.canOfferProduct(customerElm.request)) {
 				window.setTimeout(e => {
 					this.dialogController.startTimer(customerElm.patienceDuration);
 					customerElm.state = CustomerState.waiting;

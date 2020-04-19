@@ -5,6 +5,7 @@ import {Point, Rect, Size} from "./hgl/geometry.js"
 import {BusinessModel} from "./BusinessModel.js"
 import {CoffeeHouseController} from "./CoffeeHouseController.js"
 import {ProductionController} from "./ProductionController.js";
+import {ProductionWindowController} from "./ProductionWindowController.js";
 
 class Game {
 
@@ -28,7 +29,11 @@ class Game {
 		this.currentDialog = null;
 		this.paused = false;
 
+		this.productionWindowController = new ProductionWindowController();
+
 		window.addEventListener("businessDataUpdated", this.onBusinessDataUpdated.bind(this));
+		window.addEventListener("productionQueueUpdated", this.onProductionQueueUpdated.bind(this));
+		window.addEventListener("productionStorageUpdated", this.onProductionStorageUpdated.bind(this));
 
 		this.init();
 	}
@@ -126,9 +131,22 @@ class Game {
 		this.coffeeHouseController.addCustomer();
 	}
 
+	onEscapeKeyUp(evt) {
+		this.productionWindowController.close()
+	}
+
 	onClick(evt) {
+		console.log(evt.target);
 		let elm = evt.target;
-		let point = new Point(evt.x, evt.y);
+		if (elm.classList.contains("production")) {
+			let productCategory = elm.dataset.category;
+			let availableProducts = this.productionController.getAvailableProductTypesForProductCategory(productCategory);
+			let productionQueue = this.productionController.getQueueForProductCategory(productCategory);
+			let storage = this.productionController.getProductStorageForCategory(productCategory);
+			this.productionWindowController.updateProductStorage(storage);
+			this.productionWindowController.open(productCategory, availableProducts, productionQueue, storage);
+			console.log(availableProducts, productionQueue, storage);
+		}
 	}
 
 	pause() {
@@ -178,6 +196,21 @@ class Game {
 		console.log("money", this.businessModel.money);
 	}
 
+	onProductionQueueUpdated(evt) {
+		let productCategory = evt.detail;
+		if (this.productionWindowController.isOpen && this.productionWindowController.productCategory == productCategory) {
+			let productionQueue = this.productionController.getQueueForProductCategory(productCategory);
+			this.productionWindowController.updateProductionQueue(productionQueue);
+		}
+	}
+	onProductionStorageUpdated(evt) {
+		let productCategory = evt.detail;
+		if (this.productionWindowController.isOpen && this.productionWindowController.productCategory == productCategory) {
+			let storage = this.productionController.getProductStorageForCategory(productCategory);
+			this.productionWindowController.updateProductStorage(storage);
+		}
+	}
+
 	translateClientPointToWorldPoint(point) {
 		let worldRect = this.gameElement.getRect();
 		let translatedPoint = point.clone();
@@ -189,8 +222,6 @@ class Game {
 		translatedPoint.y = Math.round(translatedPoint.y * 100) / 100;
 		return translatedPoint;
 	}
-
-	// element - game controller delegation
 
 }
 

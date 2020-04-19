@@ -168,9 +168,7 @@ x-product {
 	width: 48px;
 	height: 48px;
 	position: absolute;
-	background: #ccc;
 	display: block;
-	text-align: center;
 	transition: opacity .3s ease-out, margin .3s ease-out;
 	opacity: 1;
 }
@@ -264,6 +262,8 @@ UI
 }
 
 .icon_16 {
+	width: 48px;
+	height: 48px;
 	background: transparent url("img/Sprites_16.png") no-repeat;
 }
 
@@ -307,4 +307,48 @@ UI
 	50% {transform: translate(-3px, -3px);}
 	66% {transform: translate(0, -3px);}
 	75% {transform: translate(-3px, 3px);}
+}
+
+.window {
+	position: fixed;
+	top: 25px;
+	left: 25px;
+	padding: 25px;
+	box-sizing: border-box;
+	background: #fff;
+	z-index: 100;
+}
+
+.product-grid {
+	display: flex;
+	border: 1px solid #000;
+}
+
+.production {
+	display: block;
+	width: 381px;
+	height: 375px;
+	top: 70px;
+	position: absolute;
+	cursor: pointer;
+}
+
+.production:hover {
+	background: rgba(255,255,255,0.1);
+}
+
+#breakfast-production {
+	left: 441px;
+}
+
+#pastry-production {
+	left: 1008px;
+}
+
+#beverage-production {
+	left: 1570px;
+}
+
+.clickable {
+	cursor: pointer;
 }

@@ -14,8 +14,6 @@
 					<div id="request-dialog-timer"></div>
 				</div>
 
-
-				
 				<div id="queue-leave"></div>
 				<div id="queue-enter"></div>
 				
@@ -24,10 +22,20 @@
 
 				<div id="barista" data-sprite="19"><div class="wrapper"><div class="sprite"></div></div></div>
 
+				<div class="production" id="beverage-production" data-category="beverage"></div>
+				<div class="production" id="pastry-production" data-category="pastry"></div>
+				<div class="production" id="breakfast-production" data-category="breakfast"></div>
+
 				<div id="foreground"></div>
 			</div>
 		</div>
 		<div id="ui">
+			<div id="production-window" class="window">
+				<button class="close">x</button>
+				<div class="product-grid" id="production-window-product-types"></div>
+				<div class="product-grid" id="production-window-production-queue"></div>
+				<div class="product-grid" id="production-window-product-storage"></div>
+			</div>
 		</div>
 	</div>
 	<script type="module" src="main.js"></script>

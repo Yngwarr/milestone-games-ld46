@@ -10,6 +10,5 @@ export const ProductCategory = {
 	beverage: "beverage",
 	breakfast: "breakfast",
 	pastry: "pastry",
-	lunch: "lunch",
 }
 Object.freeze(ProductCategory)
