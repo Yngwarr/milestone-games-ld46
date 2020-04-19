@@ -52,7 +52,7 @@ export class CoffeeHouseController {
 	addCustomer(data = {}) {
 		// Randomizing appearance
 		if (this.randomSpriteIds.length == 0) {
-			this.randomSpriteIds = Array.from({length: 20}, (_, i) => i).randomize();
+			this.randomSpriteIds = Array.from({length: 13}, (_, i) => i).randomize();
 		}
 
 		// Randomizing request
