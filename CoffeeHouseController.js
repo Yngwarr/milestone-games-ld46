@@ -97,7 +97,6 @@ export class CoffeeHouseController {
 				startX = 0;
 				break;
 		}
-		console.log("creating a ",productCategory,productType,"at", startX);
 		elm.rect = new Rect(startX, this.productBeltElement.getH() - 48, 48, 48);
 		elm.classList.add("new");
 		window.setTimeout(e => {elm.classList.remove("new")}, 50);

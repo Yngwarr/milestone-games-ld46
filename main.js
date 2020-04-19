@@ -77,7 +77,10 @@ class Game {
 			if (!mouseDown) return;
 			e.preventDefault();
 			const dragDistance = e.pageX - mouseDownX;
-			window.scrollBy({left:-dragDistance*4, behavior:"smooth"});
+			window.scrollBy({left:-dragDistance*1});
+		});
+		window.addEventListener("wheel", e => {
+			window.scrollBy({left:-e.deltaY});
 		});
 	}
 
