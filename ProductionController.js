@@ -233,8 +233,11 @@ export class ProductionController {
 			this.verboseLogging && console.log("- Product is in storage");
 			this.shipProductFromStorage(productType);
 		} else {
-			this.verboseLogging && console.log("- Product is pushed to open requests");
+			// FOR DEMO WE ARE DISABLING AUTOMATIC CONSTRUCTION
+			this.verboseLogging && console.log("- No storage, doing nothing");
 			this.openCustomerRequests.push(productType);
+			return
+			this.verboseLogging && console.log("- Product is pushed to open requests");
 			this.verboseLogging && console.log("- As observed here", this.openCustomerRequests);
 			this.produceProduct(productType);
 		}
