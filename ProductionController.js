@@ -1,5 +1,6 @@
 import {ProductElement} from "./ProductElement.js"
 import {ProductCategory} from "./Constants.js"
+import {ProductData} from "./ProductData.js"
 
 export class ProductionController {
 
@@ -8,7 +9,7 @@ export class ProductionController {
 		this.productionDuration = {}
 		this.verboseLogging = true;
 
-		this.defaultProductionTime = 500;
+		this.defaultProductionTime = 1500;
 
 		this.openCustomerRequests = [];
 
@@ -31,15 +32,12 @@ export class ProductionController {
 		}
 
 		fillWithProducts(this.researchableProducts, 8);
-		fillWithProducts(this.availableProducts, 2);
-
-		console.log(this.researchableProducts);
-		console.log(this.availableProducts);
+		fillWithProducts(this.availableProducts, 5);
 
 		this.storage = {};
-		this.storage[ProductCategory.beverage] = [];
-		this.storage[ProductCategory.breakfast] = [];
-		this.storage[ProductCategory.pastry] = [];
+		this.storage[ProductCategory.beverage] = {};
+		this.storage[ProductCategory.breakfast] = {};
+		this.storage[ProductCategory.pastry] = {};
 
 		this.productonQueue = {};
 		this.productonQueue[ProductCategory.beverage] = [];
@@ -54,6 +52,8 @@ export class ProductionController {
 		this.verboseLogging && console.log(this.storage);
 		this.verboseLogging && console.log(this.productonQueue);
 		this.verboseLogging && console.log(this.productionTimeouts);
+		this.verboseLogging && console.log(this.researchableProducts);
+		this.verboseLogging && console.log(this.availableProducts);
 
 		window.addEventListener("customerOrderedProduct", this.onCustomerOrderedProduct.bind(this));
 		window.addEventListener("availableProductButtonClicked", this.onAvailableProductButtonClicked.bind(this));
@@ -61,10 +61,6 @@ export class ProductionController {
 
 	tick() {
 		//no-op
-	}
-
-	getTimeoutForProductType(productType) {
-		return this.productionTimeouts[this.getProductCategoryFromProductType(productType)];
 	}
 
 	setTimeoutForProductType(productType, timeout) {
@@ -96,37 +92,41 @@ export class ProductionController {
 	}
 
 	hasProductInStorage(productType) {
+		this.verboseLogging && console.log("hasProductInStorage", productType);
 		let productCategory = this.getProductCategoryFromProductType(productType);
 		let storageCount =  this.storage[productCategory][productType] || 0;
-		this.verboseLogging && console.log("Checking storage for", productType, "there is", storageCount, "available");
+		this.verboseLogging && console.log("- Checking storage for", productType, "there is", storageCount, "available");
 		return storageCount > 0;
 	}
 
 	incrementStorage(productType) {
+		this.verboseLogging && console.log("incrementStorage", productType);
 		let productCategory = this.getProductCategoryFromProductType(productType);
 		let existingStorage = this.storage[productCategory][productType] || 0;
 		this.storage[productCategory][productType] = existingStorage + 1;
+		this.verboseLogging && console.log("- Storage updated for", productCategory, this.storage[productCategory]);
 		window.dispatchEvent(new CustomEvent("productionStorageUpdated", {detail:productCategory}));
 	}
 
 	decrementStorage(productType) {
+		this.verboseLogging && console.log("decrementStorage", productType);
 		let productCategory = this.getProductCategoryFromProductType(productType);
 		let inStorage = false;
 		let existingStorage = this.storage[productCategory][productType] || 0;
 		if (existingStorage > 0) {
 			this.storage[productCategory][productType] = existingStorage - 1;
+			this.verboseLogging && console.log("- Decremented storage", productType);
 		} else {
-			this.verboseLogging && console.log("decrementStorage negative", productCategory, productType, this.storage);
+			this.verboseLogging && console.log("- Error: Decrementing storage", productCategory, productType, this.storage);
 		}
 		window.dispatchEvent(new CustomEvent("productionStorageUpdated", {detail:productCategory}));
 	}
 
 	produceProduct(productType) {
-		if (this.getQueueForProductType(productType).length > 0 | this.getTimeoutForProductType(productType) != null) {
-			this.enqueueProductProduction(productType);
-		} else {
-			this.startProductingProduct(productType);
-		}
+		let productCategory = this.getProductCategoryFromProductType(productType);
+		this.verboseLogging && console.log("produceProduct", productType);
+		this.verboseLogging && console.log("- Adding to queue");
+		this.enqueueProductProduction(productType);
 	}
 
 	notifyQueueUpdated(productCategory) {
@@ -134,46 +134,66 @@ export class ProductionController {
 	}
 
 	enqueueProductProduction(productType) {
+		this.verboseLogging && console.log("enqueueProductProduction", productType);
 		let productCategory = this.getProductCategoryFromProductType(productType);
 		this.notifyQueueUpdated(productCategory);
-		this.verboseLogging && console.log("Queieing production of", productType);
 		this.getQueueForProductType(productType).push(productType);
+		this.verboseLogging && console.log("- Queuing production of", productType);
+		if (this.getQueueForProductType(productType).length == 1) {
+			this.verboseLogging && console.log("- Production can start immediately", productType);
+			this.processNextItemInQueue(this.getProductCategoryFromProductType(productType));
+		}
 	}
 
-	getProductionTimeForProduct(productType) {
-		let calculatedDefaultProductionTime = (parseInt(productType.split("_")[1])+1 ) * this.defaultProductionTime;
-		return this.productionDuration[productType] || calculatedDefaultProductionTime;
+	calculateProductionTimeForProduct(productType) {
+		let productionTime = ProductData.get(productType).productionTime;
+		if (!productionTime) {
+			productionTime = this.defaultProductionTime;
+		}
+		return productionTime;
+		// TODO multipliers
 	}
 
-	startProductingProduct(productType) {
-		if(this.getTimeoutForProductType(productType) != null) {
-			console.error("Production already ongoing", this.getQueueForProductType(productType), productType, this.getTimeoutForProductType(productType));
+	startProducing(productType) {
+		this.verboseLogging && console.log("startProducing", productType);
+		let productCategory = this.getProductCategoryFromProductType(productType);
+		if(this.getTimeoutForProductCategory(productCategory) != null) {
+			console.error("- Production already ongoing", this.getQueueForProductType(productType), productType, this.getTimeoutForProductCategory(productCategory));
 			return;
 		}
-		this.verboseLogging && console.log("Starting production of", productType, "it will take", this.getProductionTimeForProduct(productType));
-		this.setTimeoutForProductType(productType, window.setTimeout(this.onProductProduced.bind(this), this.getProductionTimeForProduct(productType), productType));
+		this.verboseLogging && console.log("- Actual production now starts of", productType, "it will take", this.calculateProductionTimeForProduct(productType));
+		this.setTimeoutForProductType(productType, window.setTimeout(this.onProductProduced.bind(this), this.calculateProductionTimeForProduct(productType), productType));
 	}
 
 	processNextItemInQueue(productCategory) {
+		this.verboseLogging && console.log("processNextItemInQueue", productCategory);
 		let queue = this.getQueueForProductCategory(productCategory);
-		if (queue.length > 0) {
-			let productType = queue.shift();
-			this.startProductingProduct(productType)
-			this.verboseLogging && console.log("Queue: Processing next item", productCategory);
+		if (this.getTimeoutForProductCategory(productCategory) != null) {
+			this.verboseLogging && console.log("- Cannot process next item in queue, work is already ongoing");
+			return;
 		}
-		this.verboseLogging && console.log("Queue emptied for", productCategory);
+		if (queue.length > 0) {
+			let productType = queue[0];
+			this.verboseLogging && console.log("- Processing next item in queue");
+			this.startProducing(productType)
+		} else {
+			this.verboseLogging && console.log("- Queue is empty");
+		}
 		this.notifyQueueUpdated(productCategory);
 	}
 
 	shipProduct(productType) {
+		this.verboseLogging && console.log("shipProduct", productType);
 		window.dispatchEvent(new CustomEvent("productShipped", {detail:productType}));
 	}
 
 	onProductProduced(productType) {
-		this.verboseLogging && console.log("Product produced", productType);
+		this.verboseLogging && console.log("onProductProduced", productType);
+		let productCategory = this.getProductCategoryFromProductType(productType);
 
 		// Do we need to ship immediately or can we add to storage?
 		let requestIndex = this.openCustomerRequests.indexOf(productType);
+		this.verboseLogging && console.log("- Satisfying request with index", requestIndex, "of a total of", this.openCustomerRequests);
 		if (requestIndex == -1) {
 			this.verboseLogging && console.log("- No open request for it. Storing it");
 			this.incrementStorage(productType);
@@ -182,18 +202,40 @@ export class ProductionController {
 			this.verboseLogging && console.log("- Shipping it immediately");
 			this.openCustomerRequests.splice(requestIndex, 1);
 			this.shipProduct(productType);
-			window.clearTimeout(this.getTimeoutForProductType(productType));
-			this.setTimeoutForProductType(productType, null);
-			this.processNextItemInQueue(this.getProductCategoryFromProductType(productType));
 		}
+		this.verboseLogging && console.log("- Now there are these many requests left:", this.openCustomerRequests);
+
+
+		this.verboseLogging && console.log("- Clearing timeout for", productCategory);
+		window.clearTimeout(this.getTimeoutForProductCategory(productCategory));
+		this.setTimeoutForProductType(productType, null);
+		this.verboseLogging && console.log("- Removing product from first position in queue", this.getQueueForProductCategory(productCategory).length);
+		this.getQueueForProductCategory(productCategory).shift();
+		this.verboseLogging && console.log("- Queue is now", this.getQueueForProductCategory(productCategory).length);
+		this.verboseLogging && console.log("- Processing next in queue");
+		this.processNextItemInQueue(this.getProductCategoryFromProductType(productType));
+	}
+
+	shipProductFromStorage(productType) {
+		this.verboseLogging && console.log("shipProductFromStorage", productType);
+		this.verboseLogging && console.log("- Removing it from storage", productType);
+		this.decrementStorage(productType);
+		let requestIndex = this.openCustomerRequests.indexOf(productType);
+		this.verboseLogging && console.log("- Satisfying request with index", requestIndex, "of a total of", this.openCustomerRequests);
+		this.openCustomerRequests.splice(this.openCustomerRequests.indexOf(productType), 1);
+		this.verboseLogging && console.log("- Now there are these many requests left:", this.openCustomerRequests);
+		this.shipProduct(productType);
 	}
 
 	handleProductProductionRequest(productType) {
+		this.verboseLogging && console.log("handleProductProductionRequest", productType);
 		if (this.hasProductInStorage(productType)) {
-			this.decrementStorage(productType);
-			this.onProductProduced(productType);
+			this.verboseLogging && console.log("- Product is in storage");
+			this.shipProductFromStorage(productType);
 		} else {
+			this.verboseLogging && console.log("- Product is pushed to open requests");
 			this.openCustomerRequests.push(productType);
+			this.verboseLogging && console.log("- As observed here", this.openCustomerRequests);
 			this.produceProduct(productType);
 		}
 	}

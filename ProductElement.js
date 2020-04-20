@@ -8,7 +8,7 @@ export class ProductElement extends EntityElement {
 		this.classList.add("icon_16");
 		this.dataset.type = type;
 		this.clicks = 0;
-		this.addEventListener("click", e => this.destroy());
+		//this.addEventListener("click", e => this.destroy());
 	}
 
 	static getProductCategoryFromProductType(productType) {

@@ -38,7 +38,7 @@ export class CoffeeHouseController {
 			window.setTimeout(perhapsSpawnCustomer, Math.random()*500);
 		}
 
-		//perhapsSpawnCustomer();
+		perhapsSpawnCustomer();
 	}
 
 	tick() {
@@ -62,15 +62,15 @@ export class CoffeeHouseController {
 	addCustomer(data = {}) {
 		// Randomizing appearance
 		if (this.randomSpriteIds.length == 0) {
-			this.randomSpriteIds = Array.from({length: 19}, (_, i) => i).randomize();
+			this.randomSpriteIds = Array.from({length: 12}, (_, i) => i).randomize();
 		}
 
 		// Randomizing request
 
-		let n = Math.max(5, Math.round(Math.random() * 3));
+		let n = Math.max(1, Math.round(Math.random() * 3));
 		let request = Array.from({length: n}, e => {
 			let type = Math.random() < 0.5 ? "beverage" : "pastry";
-			let index = Math.floor(Math.random()*7);
+			let index = Math.floor(Math.random()*5);
 			return `${type}_${index}`;
 		});
 

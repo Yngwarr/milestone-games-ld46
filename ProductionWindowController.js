@@ -1,5 +1,5 @@
 import "./hgl/extensions.js"
-import {ProductElement} from "./ProductElement.js"
+import {ProductData} from "./ProductData.js"
 
 export class ProductionWindowController {
 	constructor() {
@@ -15,7 +15,7 @@ export class ProductionWindowController {
 		this.productCategory = null;
 	}
 
-	open(productCategory, availableProducts = [], productionQueue = [], storage = []) {
+	open(productCategory, availableProducts = [], productionQueue = [], storage = {}) {
 		this.productCategory = productCategory;
 		this.updateAvailableProducts(availableProducts);
 		this.updateProductionQueue(productionQueue);
@@ -30,37 +30,61 @@ export class ProductionWindowController {
 		this.windowElement.setHidden(true);
 	}
 
-	createProductIconElement(productType) {
+	createProductIconElement(productType, displayData, hoverData) {
 		let elm = document.createElement("div");
 		elm.classList.add("product", "clickable", "icon_16");
 		elm.dataset.type = productType;
-		elm.addEventListener("click", this.availableProductButtonClicked.bind(this));
+
+		if (displayData) {
+			let displayDataElem = document.createElement("span");
+			displayDataElem.classList.add("product-display-data");
+			displayDataElem.innerText = displayData;
+			elm.appendChild(displayDataElem);
+		}
+
+		if (hoverData) {
+			let hoverDataElm = document.createElement("span");
+			hoverDataElm.classList.add("product-hover-data");
+			hoverDataElm.innerText = hoverData;
+			elm.appendChild(hoverDataElm);
+		}
 		return elm;
 	}
 
 	updateAvailableProducts(availableProducts = []) {
 		this.productTypesElement.innerHTML = "";
-		availableProducts.forEach(productType => {
-			this.productTypesElement.appendChild(this.createProductIconElement(productType));
+		availableProducts.clone().forEach(productType => {
+			let hoverData = `${ProductData.get(productType).title}, ${ProductData.get(productType).productionCost}`;
+			let elm = this.createProductIconElement(productType, null, hoverData);
+			elm.addEventListener("click", this.availableProductButtonClicked.bind(this));
+			this.productTypesElement.appendChild(elm);
 		})
 	}
 
 	updateProductionQueue(productionQueue = []) {
 		this.productionQueueElement.innerHTML = "";
-		productionQueue.forEach(productType => {
-			this.productionQueueElement.appendChild(this.createProductIconElement(productType));
-		})
+		productionQueue.clone().forEach(productType => {
+			let elm = this.createProductIconElement(productType);
+			elm.addEventListener("click", this.queueProductButtonClicked.bind(this));
+			this.productionQueueElement.appendChild(elm);
+		});
 	}
 
-	updateProductStorage(productStorage = []) {
+	updateProductStorage(productStorage = {}) {
 		this.productStorageElement.innerHTML = "";
-		productStorage.forEach(productType => {
-			this.productStorageElement.appendChild(this.createProductIconElement(productType));
+		Object.keys(productStorage.clone()).forEach(productType => {
+			let amount = productStorage[productType];
+			let elm = this.createProductIconElement(productType, amount);
+			this.productStorageElement.appendChild(elm);
 		})
 	}
 
 	availableProductButtonClicked(evt) {
 		window.dispatchEvent(new CustomEvent("availableProductButtonClicked", {detail:evt.target.dataset.type}));
+	}
+
+	queueProductButtonClicked(evt) {
+		console.log("Cancelling queue not implemented");
 	}
 
 	onProductButtonClicked(evt) {

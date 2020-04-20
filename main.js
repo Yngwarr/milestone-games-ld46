@@ -6,6 +6,7 @@ import {BusinessModel} from "./BusinessModel.js"
 import {CoffeeHouseController} from "./CoffeeHouseController.js"
 import {ProductionController} from "./ProductionController.js";
 import {ProductionWindowController} from "./ProductionWindowController.js";
+import {ProductData} from "./ProductData.js"
 
 class Game {
 
@@ -57,6 +58,7 @@ class Game {
 		//main is the commerce controller for now, spawning waves and stuff
 
 		this.setupWindowScroll();
+		window.scrollTo(-900, 0);
 	}
 
 	setupWindowScroll() {
@@ -82,10 +84,14 @@ class Game {
 			if (!mouseDown) return;
 			e.preventDefault();
 			const dragDistance = e.pageX - mouseDownX;
-			window.scrollBy({left:-dragDistance*1});
+			if (!this.productionWindowController.isOpen) {
+				window.scrollBy({left:-dragDistance*1});
+			}
 		});
 		window.addEventListener("wheel", e => {
-			window.scrollBy({left:-e.deltaY});
+			if (!this.productionWindowController.isOpen) {
+				window.scrollBy({left:-e.deltaY});
+			}
 		});
 	}
 
@@ -136,8 +142,10 @@ class Game {
 	}
 
 	onClick(evt) {
-		console.log(evt.target);
 		let elm = evt.target;
+		if (elm.id == "shop") {
+			this.productionWindowController.close();
+		}
 		if (elm.classList.contains("production")) {
 			let productCategory = elm.dataset.category;
 			let availableProducts = this.productionController.getAvailableProductTypesForProductCategory(productCategory);
@@ -210,7 +218,6 @@ class Game {
 			this.productionWindowController.updateProductStorage(storage);
 		}
 	}
-
 }
 
 window.g = new Game();
