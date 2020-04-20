@@ -72,7 +72,7 @@ export class CoffeeHouseController {
 		// Randomizing request
 
 		let minRequests = 1;
-		let maxRequests = 2;
+		let maxRequests = 3;
 		if (this.happyCustomers > 5) {
 			minRequests = 3;
 			maxRequests = 5;
@@ -208,7 +208,6 @@ export class CoffeeHouseController {
 				window.dispatchEvent(new CustomEvent("customerLeftDisappointed"));
 			break;
 		}
-		console.log(this.happyCustomers)
 		evt.detail.remove();
 		delete evt.detail;
 	}

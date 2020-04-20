@@ -42,6 +42,7 @@ class Game {
 		window.addEventListener("businessDataUpdated", this.onBusinessDataUpdated.bind(this));
 		window.addEventListener("productionQueueUpdated", this.onProductionQueueUpdated.bind(this));
 		window.addEventListener("productionStorageUpdated", this.onProductionStorageUpdated.bind(this));
+		window.addEventListener("productionProductRequestsUpdated", this.onProductionProductRequestsUpdated.bind(this));
 
 		this.init();
 	}
@@ -170,11 +171,11 @@ class Game {
 		}
 		if (elm.classList.contains("production")) {
 			let productCategory = elm.dataset.category;
-			let availableProducts = this.productionController.getAvailableProductTypesForProductCategory(productCategory);
-			let productionQueue = this.productionController.getQueueForProductCategory(productCategory);
-			let storage = this.productionController.getProductStorageForCategory(productCategory);
-			this.productionWindowController.updateProductStorage(storage);
-			this.productionWindowController.open(productCategory, availableProducts, productionQueue, storage);
+			this.productionWindowController.updateAvailableProducts(this.productionController.getAvailableProductTypesForProductCategory(productCategory));
+			this.productionWindowController.updateProductionQueue(this.productionController.getQueueForProductCategory(productCategory));
+			this.productionWindowController.updateProductStorage(this.productionController.getProductStorageForCategory(productCategory));
+			this.productionWindowController.updateOpenProductRequests(this.productionController.getOpenProductRequestsForCategory(productCategory));
+			this.productionWindowController.open(productCategory);
 		}
 	}
 
@@ -237,6 +238,13 @@ class Game {
 		if (this.productionWindowController.isOpen && this.productionWindowController.productCategory == productCategory) {
 			let storage = this.productionController.getProductStorageForCategory(productCategory);
 			this.productionWindowController.updateProductStorage(storage);
+		}
+	}
+	onProductionProductRequestsUpdated(evt) {
+		let productCategory = evt.detail;
+		if (this.productionWindowController.isOpen && this.productionWindowController.productCategory == productCategory) {
+			let requests = this.productionController.getOpenProductRequestsForCategory(productCategory);
+			this.productionWindowController.updateOpenProductRequests(requests);
 		}
 	}
 }

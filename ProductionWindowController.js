@@ -8,6 +8,7 @@ export class ProductionWindowController {
 		this.productTypesElement = this.windowElement.querySelector("#production-window-product-types");
 		this.productionQueueElement = this.windowElement.querySelector("#production-window-production-queue");
 		this.productStorageElement = this.windowElement.querySelector("#production-window-product-storage");
+		this.productRequestsElement = this.windowElement.querySelector("#production-window-product-requests");
 		this.closeButtonElement = this.windowElement.querySelector(".close");
 		this.closeButtonElement.addEventListener("click", this.onCloseButtonClicked.bind(this));
 		this.windowElement.setHidden(true)
@@ -15,11 +16,8 @@ export class ProductionWindowController {
 		this.productCategory = null;
 	}
 
-	open(productCategory, availableProducts = [], productionQueue = [], storage = {}) {
+	open(productCategory) {
 		this.productCategory = productCategory;
-		this.updateAvailableProducts(availableProducts);
-		this.updateProductionQueue(productionQueue);
-		this.updateProductStorage(storage);
 		this.windowElement.setHidden(false);
 		this.isOpen = true;
 	}
@@ -74,8 +72,18 @@ export class ProductionWindowController {
 		this.productStorageElement.innerHTML = "";
 		Object.keys(productStorage.clone()).forEach(productType => {
 			let amount = productStorage[productType];
-			let elm = this.createProductIconElement(productType, amount);
-			this.productStorageElement.appendChild(elm);
+			if (amount > 0) {
+				let elm = this.createProductIconElement(productType, amount);
+				this.productStorageElement.appendChild(elm);
+			}
+		})
+	}
+
+	updateOpenProductRequests(productRequests = []) {
+		this.productRequestsElement.innerHTML = "";
+		productRequests.clone().forEach(productType => {
+			let elm = this.createProductIconElement(productType, null, null);
+			this.productRequestsElement.appendChild(elm);
 		})
 	}
 

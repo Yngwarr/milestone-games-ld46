@@ -11,7 +11,10 @@ export class ProductionController {
 
 		this.defaultProductionTime = 1500;
 
-		this.openCustomerRequests = [];
+		this.openProductRequests = {};
+		this.openProductRequests[ProductCategory.beverage] = [];
+		this.openProductRequests[ProductCategory.breakfast] = [];
+		this.openProductRequests[ProductCategory.pastry] = [];
 
 		this.availableProducts = {}
 		this.availableProducts[ProductCategory.beverage] = [];
@@ -89,6 +92,40 @@ export class ProductionController {
 
 	getProductStorageForCategory(productCategory) {
 		return this.storage[productCategory];
+	}
+
+	isProductTypeRequested(productType) {
+		let productCategory = this.getProductCategoryFromProductType(productType);
+		let requestIndex = this.getOpenProductRequestsForCategory(productCategory).indexOf(productType);
+		return requestIndex != -1;
+	}
+
+	getOpenProductRequestsForCategory(productCategory) {
+		return this.openProductRequests[productCategory];
+	}
+
+	addCustomerRequest(productType) {
+		this.verboseLogging && console.log("addCustomerRequest", productType);
+		let productCategory = this.getProductCategoryFromProductType(productType);
+		this.verboseLogging && console.log("-", productCategory, "had", this.getOpenProductRequestsForCategory(productCategory).length, "requests");
+		this.getOpenProductRequestsForCategory(productCategory).push(productType);
+		this.verboseLogging && console.log("-", productCategory, "now has", this.getOpenProductRequestsForCategory(productCategory).length, "requests");
+		window.dispatchEvent(new CustomEvent("productionProductRequestsUpdated", {detail:productCategory}));
+	}
+
+	satisfyCustomerRequest(productType) {
+		this.verboseLogging && console.log("satisfyCustomerRequest", productType);
+		let productCategory = this.getProductCategoryFromProductType(productType);
+		this.verboseLogging && console.log("-", productCategory, "had", this.getOpenProductRequestsForCategory(productCategory).length, "requests");
+		let requestIndex = this.getOpenProductRequestsForCategory(productCategory).indexOf(productType);
+		if (requestIndex != -1) {
+			this.getOpenProductRequestsForCategory(productCategory).splice(requestIndex, 1);
+			this.verboseLogging && console.log("- Removed 1 occurrence of", productType, "from", productCategory, "requests");
+		} else {
+			this.verboseLogging && console.log("- Error: Could not find", productType, "in", this.getOpenProductRequestsForCategory(productCategory).length, "requests");
+		}
+		this.verboseLogging && console.log("-", productCategory, "now has", this.getOpenProductRequestsForCategory(productCategory).length, "requests");
+		window.dispatchEvent(new CustomEvent("productionProductRequestsUpdated", {detail:productCategory}));
 	}
 
 	hasProductInStorage(productType) {
@@ -192,19 +229,16 @@ export class ProductionController {
 		let productCategory = this.getProductCategoryFromProductType(productType);
 
 		// Do we need to ship immediately or can we add to storage?
-		let requestIndex = this.openCustomerRequests.indexOf(productType);
-		this.verboseLogging && console.log("- Satisfying request with index", requestIndex, "of a total of", this.openCustomerRequests);
-		if (requestIndex == -1) {
+		if (this.isProductTypeRequested(productType)) {
+			// Remove the request if satisfied
+			this.verboseLogging && console.log("- Shipping product to meet request");
+			this.satisfyCustomerRequest(productType);
+			this.shipProduct(productType);
+		} else {
 			this.verboseLogging && console.log("- No open request for it. Storing it");
 			this.incrementStorage(productType);
-		} else {
-			// Remove the request if satisfied
-			this.verboseLogging && console.log("- Shipping it immediately");
-			this.openCustomerRequests.splice(requestIndex, 1);
-			this.shipProduct(productType);
 		}
-		this.verboseLogging && console.log("- Now there are these many requests left:", this.openCustomerRequests);
-
+		this.verboseLogging && console.log("- Now there are these many requests left:", this.getOpenProductRequestsForCategory(productCategory).length);
 
 		this.verboseLogging && console.log("- Clearing timeout for", productCategory);
 		window.clearTimeout(this.getTimeoutForProductCategory(productCategory));
@@ -217,28 +251,28 @@ export class ProductionController {
 	}
 
 	shipProductFromStorage(productType) {
+		let productCategory = this.getProductCategoryFromProductType(productType);
 		this.verboseLogging && console.log("shipProductFromStorage", productType);
 		this.verboseLogging && console.log("- Removing it from storage", productType);
 		this.decrementStorage(productType);
-		let requestIndex = this.openCustomerRequests.indexOf(productType);
-		this.verboseLogging && console.log("- Satisfying request with index", requestIndex, "of a total of", this.openCustomerRequests);
-		this.openCustomerRequests.splice(this.openCustomerRequests.indexOf(productType), 1);
-		this.verboseLogging && console.log("- Now there are these many requests left:", this.openCustomerRequests);
+		this.satisfyCustomerRequest(productType);
+		this.verboseLogging && console.log("- Now there are these many requests left:", this.getOpenProductRequestsForCategory(productCategory).length);
 		this.shipProduct(productType);
 	}
 
 	handleProductProductionRequest(productType) {
 		this.verboseLogging && console.log("handleProductProductionRequest", productType);
+		let productCategory = this.getProductCategoryFromProductType(productType);
 		if (this.hasProductInStorage(productType)) {
 			this.verboseLogging && console.log("- Product is in storage");
 			this.shipProductFromStorage(productType);
 		} else {
 			// FOR DEMO WE ARE DISABLING AUTOMATIC CONSTRUCTION
-			this.verboseLogging && console.log("- No storage, doing nothing");
-			this.openCustomerRequests.push(productType);
+			this.verboseLogging && console.log("- No storage, just adding request");
+			this.addCustomerRequest(productType);
+			this.verboseLogging && console.log("- As observed here", this.getOpenProductRequestsForCategory(productCategory));
 			return
 			this.verboseLogging && console.log("- Product is pushed to open requests");
-			this.verboseLogging && console.log("- As observed here", this.openCustomerRequests);
 			this.produceProduct(productType);
 		}
 	}
