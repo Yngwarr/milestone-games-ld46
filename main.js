@@ -157,7 +157,6 @@ class Game {
 
 	onClick(evt) {
 		let elm = evt.target;
-		console.log(elm);
 		if (elm.id == "shop" || elm.id == "game") {
 			this.productionWindowController.close();
 		}

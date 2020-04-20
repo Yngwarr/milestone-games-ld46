@@ -85,7 +85,6 @@ export class CoffeeHouseController {
 		} else if (this.happyCustomers > 25) {
 			minRequests = maxRequests = this.happyCustomers / 3;
 		}
-		console.log(minRequests, maxRequests)
 
 		let n = Math.max(minRequests, Math.round(Math.random() * maxRequests));
 		let request = Array.from({length: n}, e => {
