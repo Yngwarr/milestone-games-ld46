@@ -35,7 +35,7 @@ export class CoffeeHouseController {
 		this.randomSpriteIds = [];
 
 		let perhapsSpawnCustomer = e => {
-			if (this.queueLength < 4 && Math.random() > 0.2) {
+			if (this.queueLength < 4 && Math.random() > 0.8) {
 				this.addCustomer();
 			}
 			window.setTimeout(perhapsSpawnCustomer, Math.random()*500);
