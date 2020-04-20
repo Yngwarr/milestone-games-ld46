@@ -17,6 +17,9 @@ export class CoffeeHouseController {
 		CustomerElement.register();
 		ProductElement.register();
 
+		//DEMO SCORE
+		this.happyCustomers = 0;
+
 		// Customers and Products
 		window.addEventListener("customerStoppedFirstInLine", this.onCustomerStoppedFirstInLine.bind(this));
 		window.addEventListener("productStoppedFirstInLine", this.onProductStoppedFirstInLine.bind(this));
@@ -32,7 +35,7 @@ export class CoffeeHouseController {
 		this.randomSpriteIds = [];
 
 		let perhapsSpawnCustomer = e => {
-			if (this.queueLength < 5 && Math.random() > 0.2) {
+			if (this.queueLength < 4 && Math.random() > 0.2) {
 				this.addCustomer();
 			}
 			window.setTimeout(perhapsSpawnCustomer, Math.random()*500);
@@ -67,7 +70,23 @@ export class CoffeeHouseController {
 
 		// Randomizing request
 
-		let n = Math.max(1, Math.round(Math.random() * 3));
+		let minRequests = 1;
+		let maxRequests = 3;
+		if (this.happyCustomers > 5) {
+			minRequests = 3;
+			maxRequests = 5;
+		} else if (this.happyCustomers > 10) {
+			minRequests = 4;
+			maxRequests = 6;
+		} else if (this.happyCustomers > 20) {
+			minRequests = 5;
+			maxRequests = 9;
+		} else if (this.happyCustomers > 25) {
+			minRequests = maxRequests = this.happyCustomers / 3;
+		}
+		console.log(minRequests, maxRequests)
+
+		let n = Math.max(minRequests, Math.round(Math.random() * maxRequests));
 		let request = Array.from({length: n}, e => {
 			let type = Math.random() < 0.5 ? "beverage" : "pastry";
 			let index = Math.floor(Math.random()*5);
@@ -180,6 +199,7 @@ export class CoffeeHouseController {
 		switch(evt.detail.dataset.outcome) {
 			case "happy":
 				window.dispatchEvent(new CustomEvent("customerLeftHappy"));
+				this.happyCustomers++;
 			break;
 			case "angry":
 				window.dispatchEvent(new CustomEvent("customerLeftAngry"));
@@ -188,6 +208,7 @@ export class CoffeeHouseController {
 				window.dispatchEvent(new CustomEvent("customerLeftDisappointed"));
 			break;
 		}
+		console.log(this.happyCustomers)
 		evt.detail.remove();
 		delete evt.detail;
 	}

@@ -192,6 +192,7 @@ UI
 
 #request-dialog {
 	position: absolute;
+	display: none;
 	bottom: 300px;
 	right: 450px;
 	background: #eee;
@@ -200,7 +201,6 @@ UI
 	padding: 0 24px;
 	height: 100px;
 	z-index: 100;
-	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	justify-content: space-around;

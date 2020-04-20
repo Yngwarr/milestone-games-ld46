@@ -58,7 +58,9 @@ class Game {
 		//main is the commerce controller for now, spawning waves and stuff
 
 		this.setupWindowScroll();
-		window.scrollTo(-900, 0);
+		window.setTimeout(e => {
+			window.scrollTo(5000, 0);
+		}, 10)
 	}
 
 	setupWindowScroll() {
@@ -153,7 +155,6 @@ class Game {
 			let storage = this.productionController.getProductStorageForCategory(productCategory);
 			this.productionWindowController.updateProductStorage(storage);
 			this.productionWindowController.open(productCategory, availableProducts, productionQueue, storage);
-			console.log(availableProducts, productionQueue, storage);
 		}
 	}
 
