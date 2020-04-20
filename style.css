@@ -15,7 +15,7 @@ body::-webkit-scrollbar {
 
 
 body {
-	font-family: sans-serif;
+	font-family: monospace;
 	background: #000;
 	max-width: 100%;
 	overflow-x: auto;
@@ -64,6 +64,7 @@ body {
 	bottom: 0;
 	right: 0;
 	overflow: hidden;
+	pointer-events: none;
 }
 
 #queue-leave {
@@ -349,6 +350,7 @@ UI
 	display: flex;
 	padding: 16px;
 	margin: 0 0 16px 0;
+	min-height: 64px;
 }
 
 .product-grid .product {
@@ -414,4 +416,45 @@ UI
 
 #beverage-production {
 	left: 1570px;
+}
+
+
+.modal {
+	position: fixed;
+	background: #34210e;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	rigth: 0;
+	width: 100%;
+	height: 100%;
+	color: #eee;
+	z-index: 9000;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: stretch;
+	display: none;
+	cursor: default;
+}
+
+.modal p {
+	max-width: 400px;
+	font-size: 18px;
+	line-height: 20px;
+	margin: 0 55px 25px 0;
+}
+
+.modal button {
+	border: 0;
+	background: #fef3c0;
+	color: #34210e;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding: 25px 60px;
+	font-size: 24px;
+	pointer-events: all;
+	cursor: pointer;
 }

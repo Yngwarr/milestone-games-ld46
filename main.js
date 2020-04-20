@@ -21,6 +21,13 @@ class Game {
 		this.resizeTimeout = null;
 		this.chunkUpdateTimeout = null;
 
+		this.loopAudioElement = document.getElementById("loop");
+		this.introAudioElement = document.getElementById("intro");
+		this.paused = true;
+
+		this.introScreenElement = document.getElementById("intro-screen");
+		this.titleScreenElement = document.getElementById("title-screen");
+
 		// FPS coordination
 		this.speed = 1;
 		this.delta = 0;
@@ -39,8 +46,6 @@ class Game {
 		this.init();
 	}
 
-
-
 	get fpsInterval() {
 		return (1000 / 60) / this.speed;
 	}
@@ -55,12 +60,19 @@ class Game {
 		this.productionController = new ProductionController(this);
 		this.coffeeHouseController = new CoffeeHouseController(this);
 
-		//main is the commerce controller for now, spawning waves and stuff
-
 		this.setupWindowScroll();
 		window.setTimeout(e => {
 			window.scrollTo(5000, 0);
 		}, 10)
+
+		this.introScreenElement.setHidden(false, "flex");
+	}
+
+	startGame() {
+		this.titleScreenElement.setHidden(true);
+		this.coffeeHouseController.openForBusiness();
+		this.introAudioElement.pause();
+		this.loopAudioElement.play();
 	}
 
 	setupWindowScroll() {
@@ -145,8 +157,17 @@ class Game {
 
 	onClick(evt) {
 		let elm = evt.target;
-		if (elm.id == "shop") {
+		console.log(elm);
+		if (elm.id == "shop" || elm.id == "game") {
 			this.productionWindowController.close();
+		}
+		if (elm.id == "title-screen-start") {
+			this.startGame();
+		}
+		if (elm.id == "intro-screen-start") {
+			this.introScreenElement.setHidden(true);
+			this.introAudioElement.play();
+			this.titleScreenElement.setHidden(false, "flex");
 		}
 		if (elm.classList.contains("production")) {
 			let productCategory = elm.dataset.category;

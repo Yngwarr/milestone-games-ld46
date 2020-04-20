@@ -33,14 +33,15 @@ export class CoffeeHouseController {
 		this.currentCustomerPatienceTimeout = null;
 
 		this.randomSpriteIds = [];
+	}
 
+	openForBusiness() {
 		let perhapsSpawnCustomer = e => {
 			if (this.queueLength < 4 && Math.random() > 0.8) {
 				this.addCustomer();
 			}
 			window.setTimeout(perhapsSpawnCustomer, Math.random()*500);
 		}
-
 		perhapsSpawnCustomer();
 	}
 
@@ -71,7 +72,7 @@ export class CoffeeHouseController {
 		// Randomizing request
 
 		let minRequests = 1;
-		let maxRequests = 3;
+		let maxRequests = 2;
 		if (this.happyCustomers > 5) {
 			minRequests = 3;
 			maxRequests = 5;

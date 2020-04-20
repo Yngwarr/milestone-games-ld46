@@ -8,6 +8,8 @@
 	<link rel="icon" href="img/favicon.png">
 </head>
 <body>
+	<audio src="music/loop.mp3" loop id="loop"></audio>
+	<audio src="music/intro.mp3" id="intro"></audio>
 	<div id="game">
 		<div id="world">
 			<div id="shop">
@@ -31,6 +33,18 @@
 			</div>
 		</div>
 		<div id="ui">
+			<div id="intro-screen" class="modal">
+				<button id="intro-screen-start">START GAME</button>
+			</div>
+			<div id="title-screen" class="modal">
+				<p>
+				Kaffetår. Translates literally to "coffee tear" in Swedish.<br><br>	
+				You are trying to make coffeehouse you inherited from your grandfather stay in business against the fierce competition of large coffeehouse chains.
+				<br><br>Being a former mechanic, you must use your best engineering know-how to <em>keep it alive</em>.
+
+				<br><br>Good luck.</p>
+				<button id="title-screen-start">CONTINUE</button>
+			</div>
 			<div id="production-window" class="window">
 				<button class="close">x</button>
 				<h2>Available products</h2>
