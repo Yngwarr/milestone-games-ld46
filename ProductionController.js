@@ -7,7 +7,7 @@ export class ProductionController {
 	constructor(delegate) {
 		this.delegate = delegate;
 		this.productionDuration = {}
-		this.verboseLogging = true;
+		this.verboseLogging = false;
 
 		this.defaultProductionTime = 1500;
 

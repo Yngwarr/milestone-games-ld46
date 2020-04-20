@@ -347,13 +347,17 @@ UI
 
 .product-grid {
 	display: flex;
-	border: 1px solid #000;
 	padding: 16px;
 	margin: 0 0 16px 0;
 }
 
 .product-grid .product {
 	position: relative;
+	margin: 5px;
+}
+
+#production-window-product-types .product {
+	cursor: pointer;
 }
 
 .product-display-data {
@@ -371,11 +375,11 @@ UI
 .product-hover-data {
 	pointer-events: none;
 	position: absolute;
-	bottom: -10px;
-	right: -100px;
-	width: 100px;
-	text-align: right;
-	background: #000;
+	bottom: -20px;
+	right: -20px;
+	white-space: nowrap;
+	text-align: center;
+	background: rgba(0,0,0,0.8);
 	color: #fff;
 	padding: 5px;	
 	font-size: 10px;
@@ -410,8 +414,4 @@ UI
 
 #beverage-production {
 	left: 1570px;
-}
-
-.clickable {
-	cursor: pointer;
 }

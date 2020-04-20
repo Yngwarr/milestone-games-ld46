@@ -54,7 +54,7 @@ export class ProductionWindowController {
 	updateAvailableProducts(availableProducts = []) {
 		this.productTypesElement.innerHTML = "";
 		availableProducts.clone().forEach(productType => {
-			let hoverData = `${ProductData.get(productType).title}, ${ProductData.get(productType).productionCost}`;
+			let hoverData = `${ProductData.get(productType).title}`;
 			let elm = this.createProductIconElement(productType, null, hoverData);
 			elm.addEventListener("click", this.availableProductButtonClicked.bind(this));
 			this.productTypesElement.appendChild(elm);
